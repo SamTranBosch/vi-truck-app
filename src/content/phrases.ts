@@ -1,0 +1,44 @@
+/**
+ * Every fixed sentence the teacher voice says, in one place so the audio list stays complete.
+ * Short, simple, one idea each.
+ */
+export const PHRASES = {
+  praise: ['Giỏi quá!', 'Đúng rồi!', 'Tuyệt vời!', 'Hay quá!'],
+  tryAgain: ['Thử lại nào!', 'Gần đúng rồi, thử lại nhé!'],
+  tapToHear: 'Chạm vào hình để nghe.',
+  next: 'Tiếp nào!',
+  findAll: 'Tìm tất cả nhé!',
+  spellIt: 'Chạm từng ô theo thứ tự.',
+  readWord: 'Đọc chữ, chọn hình đúng.',
+  hearWord: 'Nghe và chọn hình đúng.',
+  traceIt: 'Tô theo chữ nhé.',
+  traceGood: 'Tô đẹp quá!',
+  storyListen: 'Nghe kể chuyện nhé.',
+  storyOrder: 'Chạm các hình theo thứ tự câu chuyện.',
+  combine: 'Chọn một chữ ở hàng, một chữ ở cột.',
+  notYet: 'Chưa đến lượt bài này.',
+  lessonDone: 'Bé đã lau xong một mảnh bùn!',
+  worldDone: 'Chiếc xe cứu hỏa đã sạch bóng! Bé giỏi quá!',
+  findLetter: (letters: string[]) => `Tìm chữ ${letters.join(', chữ ')}.`,
+  whichSound: (name: string) => `Tiếng nào có âm ${name}?`,
+  whichTone: (name: string) => `Tiếng nào có thanh ${name}?`,
+} as const;
+
+export const ALL_FIXED_PHRASES: string[] = [
+  ...PHRASES.praise,
+  ...PHRASES.tryAgain,
+  PHRASES.tapToHear,
+  PHRASES.next,
+  PHRASES.findAll,
+  PHRASES.spellIt,
+  PHRASES.readWord,
+  PHRASES.hearWord,
+  PHRASES.traceIt,
+  PHRASES.traceGood,
+  PHRASES.storyListen,
+  PHRASES.storyOrder,
+  PHRASES.combine,
+  PHRASES.notYet,
+  PHRASES.lessonDone,
+  PHRASES.worldDone,
+];
