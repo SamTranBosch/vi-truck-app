@@ -29,7 +29,7 @@ export default defineConfig({
       },
       workbox: {
         // Everything, including all mp3 audio, is cached so the app works offline.
-        globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2,mp3,json}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webp,woff,woff2,mp3,json}'],
         navigateFallback: 'index.html',
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },

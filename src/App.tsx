@@ -1,3 +1,4 @@
+import { Pic } from './components/Pic';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PHRASES } from './content/phrases';
 import { WORLD1, WORLD1_IDS } from './content/world1';
@@ -13,6 +14,7 @@ import {
   loadProgress,
   markComplete,
   requestPersistence,
+  tileState,
   saveProgress,
   type Progress,
 } from './lib/progress';
@@ -116,7 +118,7 @@ export function App() {
           <header className="map-bar">
             <h1 className="title">Xe Học Chữ</h1>
             <span className="count" aria-label={`Đã lau ${done} trên ${WORLD1_IDS.length} mảnh bùn`}>
-              🧽 {done}/{WORLD1_IDS.length}
+              <Pic emoji="🧽" className="pic-ui" /> {done}/{WORLD1_IDS.length}
             </span>
             <button
               type="button"
@@ -128,7 +130,7 @@ export function App() {
               onPointerCancel={endHold}
               onContextMenu={(e) => e.preventDefault()}
             >
-              ⚙️
+              <Pic emoji="⚙️" className="pic-ui" />
             </button>
           </header>
           <TruckScene
@@ -141,6 +143,19 @@ export function App() {
           <p className="banner" role="status" aria-live="polite">
             {hint || (allDone ? PHRASES.worldDone : 'Chạm vào ngôi sao để lau bùn!')}
           </p>
+          {!allDone && (
+            <button
+              type="button"
+              className="btn btn-go glow play-next"
+              aria-label="Học bài tiếp theo"
+              onClick={() => {
+                const next = WORLD1.find((_, i) => tileState(WORLD1_IDS, progress, i) === 'current');
+                if (next) openLesson(next.id);
+              }}
+            >
+              <span className="play-tri" aria-hidden="true">▶</span>
+            </button>
+          )}
         </main>
       )}
       {celebrate && (() => {

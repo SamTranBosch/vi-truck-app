@@ -1,3 +1,4 @@
+import { SvgPic } from './Pic';
 /**
  * The picture hidden under the mud: a Vietnamese fire truck (xe cứu hỏa) with its ladder raised
  * to a burning building. Original artwork, drawn as flat shapes with ink outlines.
@@ -156,8 +157,8 @@ export function TruckArt() {
         <path d="M70 438 L82 408 L94 438 Z" fill="#FF8A3D" />
         <path d="M66 440 H98" strokeWidth={4} />
       </g>
-      <text x={290} y={436} fontSize={46} textAnchor="middle">🐕</text>
-      <text x={196} y={430} fontSize={30} textAnchor="middle">🧯</text>
+      <SvgPic emoji="🐕" x={290} y={392} size={48} />
+      <SvgPic emoji="🧯" x={196} y={404} size={30} />
     </g>
   );
 }

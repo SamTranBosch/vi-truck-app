@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { PHRASES } from '../content/phrases';
 import { sfx, speak } from '../lib/audio';
 import { parseSyllable } from '../lib/vietnamese';
+import { Pic } from './Pic';
 
 let praiseCounter = 0;
 
@@ -30,7 +31,7 @@ export function useLater(): (fn: () => void, ms: number) => void {
 export function SpeakButton({ text, label = 'Nghe lại' }: { text: string; label?: string }) {
   return (
     <button type="button" className="btn btn-round btn-sky" aria-label={label} onClick={() => void speak(text)}>
-      🔊
+      <Pic emoji="🔊" className="pic-ui" />
     </button>
   );
 }

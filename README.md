@@ -104,3 +104,6 @@ Adding the teacher voice to a deployed build: see "Teacher voice" above (workflo
 - `src/lib/audio.ts` — clip player + speechSynthesis fallback + sound effects; `progress.ts` — storage.
 
 See `BACKLOG.md` for later ideas and `docs/WORLD1_CONTENT.md` / `docs/LESSON_MAP.md` for the textbook mapping.
+
+## Pictures
+Word pictures are Noto emoji SVGs bundled in `src/assets/noto/` (Apache-2.0, see `NOTICE`). `Pic` finds a picture by its emoji, so `src/content/pictures.ts` still maps words to emoji. To add a new emoji: add it to the list, then run `node scripts/extract-pics.mjs <sprites/all.svg from @svgmoji/noto> <list>` (see the script header). A custom hero picture for the map can be dropped in `src/assets/hero/` (see the README there).

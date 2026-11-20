@@ -287,3 +287,37 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 
 .act-story-order .prompt { flex-wrap: wrap; }
 .act-story-order .prompt .emoji-lg { font-size: 2.2rem; }
+
+/* ---- bundled pictures (Pic) ---- */
+.pic { display: inline-flex; align-items: center; justify-content: center; gap: 2%; line-height: 1; }
+.pic img { width: 100%; height: 100%; object-fit: contain; display: block; -webkit-user-drag: none; user-select: none; filter: drop-shadow(0 4px 0 rgba(31, 43, 71, 0.16)); }
+.pic-text { font-size: 3rem; }
+.pic-xl { width: min(46vw, 190px); height: min(46vw, 190px); animation: emoji-bob 2.8s ease-in-out infinite; transform-origin: 50% 90%; }
+.pic-lg { width: 84px; height: 84px; }
+.pic-md { width: 64px; height: 64px; }
+.pic-ui { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+.pic-tag { width: 1.3em; height: 1.3em; }
+.pic-xl.pic-n2, .pic-xl.pic-n3 { width: min(70vw, 300px); }
+.pic-lg.pic-n2 { width: 120px; }
+.row-3 .pic-lg { width: min(24vw, 96px); height: min(24vw, 96px); }
+.stars .pic { width: 3.4rem; height: 3.4rem; }
+.confetti .pic { width: 1em; height: 1em; }
+.spark .pic { width: 1em; height: 1em; }
+.num-chips { display: inline-flex; gap: 6px; }
+.num-chips i { font-style: normal; font-family: var(--font-display); font-weight: 800; width: 34px; height: 34px; border-radius: 50%; background: var(--sun); border: 3px solid var(--ink); display: grid; place-items: center; }
+.btn .pic-ui { width: 1.4em; height: 1.4em; vertical-align: middle; }
+
+/* ---- layout pass: fill the screen, group things, give pictures a stage ---- */
+.act { justify-content: center; gap: clamp(16px, 3.6dvh, 34px); }
+.card-xl { width: min(100%, 360px); min-height: clamp(300px, 46dvh, 440px); gap: 8px; }
+.card-xl .pic-xl { width: min(52vw, 220px); height: min(52vw, 220px); border-radius: 50%; background: radial-gradient(circle at 50% 55%, hsl(var(--lesson-hue, 200) 100% 93%) 0 62%, transparent 63%); padding: 10px; }
+.card-xl .pic-xl.pic-n2 { width: min(74vw, 300px); border-radius: 40px; }
+.card-pick { min-height: clamp(130px, 21dvh, 190px); }
+.card-pick .pic { background: radial-gradient(circle at 50% 55%, hsl(var(--lesson-hue, 200) 100% 94%) 0 66%, transparent 67%); border-radius: 50%; padding: 6px; }
+.row-3 { gap: 10px; }
+.card-md .pic-lg { width: 96px; height: 96px; }
+.act-actions .btn-round { width: 72px; height: 72px; }
+.lesson-body { padding-bottom: 88px; }
+.map { justify-content: flex-start; padding-top: max(18px, 4dvh); }
+.map { justify-content: center; padding-top: 8px; }
+.play-next { width: 112px; height: 84px; border-radius: 42px; font-size: 2.6rem; display: grid; place-items: center; margin-top: 6px; }

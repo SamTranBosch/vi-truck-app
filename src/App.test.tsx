@@ -58,7 +58,13 @@ describe('App flow', () => {
     expect(document.querySelectorAll('.hit-current')).toHaveLength(1);
     expect(document.querySelectorAll('.hit-locked')).toHaveLength(15);
     expect(tile('mo-dau')).toHaveClass('hit-current');
-    expect(screen.getByText('🧽 0/16')).toBeInTheDocument();
+    expect(screen.getByLabelText('Đã lau 0 trên 16 mảnh bùn')).toBeInTheDocument();
+  });
+
+  it('the big play button opens the current lesson', async () => {
+    await boot();
+    fireEvent.click(screen.getByRole('button', { name: 'Học bài tiếp theo' }));
+    expect(screen.getByRole('region', { name: WORLD1[0].title })).toBeInTheDocument();
   });
 
   it('a locked tile does not open a lesson; it says it is not its turn yet', async () => {
@@ -93,7 +99,7 @@ describe('App flow', () => {
     expect(screen.getByRole('button', { name: 'Bài tiếp' })).toBeEnabled();
     fireEvent.click(screen.getByRole('button', { name: 'Về bản đồ' }));
     // back on the map
-    expect(screen.getByText('🧽 1/16')).toBeInTheDocument();
+    expect(screen.getByLabelText('Đã lau 1 trên 16 mảnh bùn')).toBeInTheDocument();
     expect(tile('mo-dau')).toHaveClass('hit-done');
     expect(tile('bai-1')).toHaveClass('hit-current');
     expect(document.querySelector('.mud.wiping')).not.toBeNull();
@@ -124,7 +130,7 @@ describe('App flow', () => {
   it('restores saved progress on start', async () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, completed: { 'mo-dau': 1, 'bai-1': 2 }, soundOn: true }));
     await boot();
-    expect(screen.getByText('🧽 2/16')).toBeInTheDocument();
+    expect(screen.getByLabelText('Đã lau 2 trên 16 mảnh bùn')).toBeInTheDocument();
     expect(tile('bai-2')).toHaveClass('hit-current');
     expect(document.querySelector('.mud.wiping')).toBeNull();
   });
@@ -144,7 +150,7 @@ describe('App flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Chắc chắn xoá hết?' }));
     await tick(50);
     fireEvent.click(screen.getByRole('button', { name: 'Xong' }));
-    expect(screen.getByText('🧽 0/16')).toBeInTheDocument();
+    expect(screen.getByLabelText('Đã lau 0 trên 16 mảnh bùn')).toBeInTheDocument();
   });
 
   it('every lesson opens and every activity of every lesson renders content', async () => {

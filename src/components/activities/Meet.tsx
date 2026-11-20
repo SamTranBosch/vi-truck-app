@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Pic } from '../Pic';
 import { pic } from '../../content/pictures';
 import { speak } from '../../lib/audio';
 import { Dots, NextButton, PrevButton, SpeakButton, WordText } from '../shared';
@@ -17,7 +18,7 @@ export function Meet({ activity, onDone }: ActivityProps<'meet'>) {
   return (
     <div className="act act-meet">
       <button type="button" className="card card-xl" aria-label={`Nghe: ${word}`} onClick={() => void speak(word)}>
-        <span className="emoji-xl" aria-hidden="true">{pic(word)}</span>
+        <Pic emoji={pic(word) ?? '🔤'} className="pic-xl" />
         <WordText word={word} marks={activity.marks} className="word-xl" />
       </button>
       <Dots count={activity.words.length} index={i} />

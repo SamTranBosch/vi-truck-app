@@ -104,3 +104,15 @@ Open:
 - [ ] Music taste: only the user's ears can judge "funny but not distracting". Volume constants are `BASE_VOLUME` / `DUCKED_VOLUME` in `src/lib/music.ts`; tempo `BPM`. A real royalty-free track could replace it later.
 - [ ] Not verified on a real iPhone: music start after first tap, ducking while the iOS voice speaks, silent switch behaviour (iOS mutes WebAudio when the ring/silent switch is on silent).
 - [ ] Textbook content/pictures: see conversation. Open decision on copyright for using the PDF's pictures in a public repo.
+
+## Feedback round 3 (2026-11-20): "use MCP to enhance UI/UX and pictures"
+Done
+- Word pictures are now bundled Noto SVGs (`src/components/Pic.tsx`, `src/assets/noto/`, 95 files, Apache-2.0, see NOTICE) instead of system emoji: same look on every iPhone/iPad, works offline. `scripts/extract-pics.mjs` rebuilds them from the @svgmoji/noto sprite if a word is added.
+- Cards fill the screen (picture on a coloured disc, bigger buttons, tighter spacing), pictures on mud tiles, big green "play next" button on the map.
+- Optional hero picture: put `truck.png|jpg|webp` (3:4) in `src/assets/hero/` and the map shows it under the mud instead of the built-in drawing.
+Canva (connected 2026-11-20)
+- `generate-image` works and gave a good 3:4 fire-truck picture (Canva media id MAHbbX5UUaU, kept in the user's Canva account).
+- Only a 150x199 preview reaches the workspace and the workspace cannot reach Canva's download hosts, so the full-size file has to be exported by the user (Canva -> Share -> Download -> PNG) and dropped into `src/assets/hero/truck.png`.
+- Ideas once that works: a sticker sheet per lesson hue, a nicer mascot, a celebration background.
+Not done / ideas
+- Hand-drawn or Canva-generated pictures per word (80+) would look more unified than Noto; needs a download route for each file.

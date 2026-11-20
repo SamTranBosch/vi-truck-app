@@ -1,3 +1,4 @@
+import { SvgPic, emojiParts, picUrl } from './Pic';
 import type { Lesson } from '../content/types';
 import { CELL_H, CELL_W, COLS, ROWS, SCENE_H, SCENE_W, UNLOCK_CELLS, cellRect, mudPath } from '../lib/mud';
 import { tileState, type Progress } from '../lib/progress';
@@ -11,6 +12,9 @@ interface Props {
   onOpen: (lessonId: string) => void;
   onLocked: () => void;
 }
+
+/** Optional picture dropped into src/assets/hero (see README there). Falls back to the built-in drawing. */
+const HERO = Object.values(import.meta.glob('../assets/hero/truck.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>)[0];
 
 const MUD = '#8B6B4A';
 const MUD_DARK = '#6B4F34';
@@ -27,7 +31,7 @@ export function TruckScene({ lessons, progress, justWiped, onOpen, onLocked }: P
     <div className="scene" role="group" aria-label="Xe cứu hỏa dưới lớp bùn">
       <svg className="scene-svg" viewBox={`0 0 ${SCENE_W} ${SCENE_H}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <SceneDefs />
-        <TruckArt />
+        {HERO ? <image href={HERO} x={0} y={0} width={SCENE_W} height={SCENE_H} preserveAspectRatio="xMidYMid slice" /> : <TruckArt />}
         {cells.map(({ cell, index, lesson }) => {
           if (!lesson) return null;
           const state = tileState(ids, progress, index);
@@ -42,14 +46,18 @@ export function TruckScene({ lessons, progress, justWiped, onOpen, onLocked }: P
               <circle cx={r.x + CELL_W - 22} cy={r.y + CELL_H - 30} r={7} fill={MUD_DARK} opacity={0.45} />
               <circle cx={r.x + CELL_W - 28} cy={r.y + 30} r={3.5} fill={MUD_LIGHT} />
               {state === 'current' && (
-                <text x={r.cx} y={r.cy - 4} textAnchor="middle" className="mud-star" fontSize={30}>⭐</text>
+                <SvgPic emoji="⭐" x={r.cx} y={r.cy - 42} size={34} className="mud-star" />
               )}
               {state === 'locked' && (
-                <text x={r.cx} y={r.cy + 4} textAnchor="middle" className="mud-lock" fontSize={20} opacity={0.55}>🔒</text>
+                <SvgPic emoji="🔒" x={r.cx} y={r.cy - 24} size={20} className="mud-lock" opacity={0.6} />
               )}
-              <text x={r.cx} y={r.cy + (state === 'current' ? 26 : 28)} textAnchor="middle" className="mud-label" fontSize={lesson.label.length > 3 ? 15 : 20}>
-                {lesson.label}
-              </text>
+              {emojiParts(lesson.label).every((p) => picUrl(p)) ? (
+                <SvgPic emoji={lesson.label} x={r.cx} y={r.cy + (state === 'current' ? -2 : 0)} size={38} />
+              ) : (
+                <text x={r.cx} y={r.cy + (state === 'current' ? 26 : 28)} textAnchor="middle" className="mud-label" fontSize={lesson.label.length > 3 ? 15 : 20}>
+                  {lesson.label}
+                </text>
+              )}
             </g>
           );
         })}

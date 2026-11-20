@@ -1,3 +1,4 @@
+import { Pic } from './Pic';
 import { useEffect, useRef, useState } from 'react';
 
 type Mood = 'idle' | 'good' | 'oops' | 'win';
@@ -67,9 +68,9 @@ export function Mascot({ big = false, forceMood }: { big?: boolean; forceMood?: 
       </svg>
       {happy && (
         <>
-          <span className="spark s1">⭐</span>
-          <span className="spark s2">✨</span>
-          <span className="spark s3">⭐</span>
+          <span className="spark s1"><Pic emoji="⭐" /></span>
+          <span className="spark s2"><Pic emoji="✨" /></span>
+          <span className="spark s3"><Pic emoji="⭐" /></span>
         </>
       )}
     </div>

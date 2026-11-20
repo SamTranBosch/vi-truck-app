@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Pic } from '../Pic';
 import { pic } from '../../content/pictures';
 import { soundPrompt, tonePrompt } from '../../content/speech';
 import { sfx, speak } from '../../lib/audio';
@@ -65,7 +66,7 @@ export function Hunt({ activity, onDone }: ActivityProps<'hunt'>) {
             aria-pressed={found.has(w)}
             onClick={() => tap(w)}
           >
-            <span className="emoji-lg" aria-hidden="true">{pic(w)}</span>
+            <Pic emoji={pic(w) ?? '🔤'} className="pic-md" />
             <WordText word={w} className="word-md" />
             {found.has(w) && <span className="check" aria-hidden="true">✓</span>}
           </button>

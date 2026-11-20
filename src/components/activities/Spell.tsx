@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Pic } from '../Pic';
 import { pic } from '../../content/pictures';
 import { sfx, speak, speakSeq } from '../../lib/audio';
 import { TONE_MARK, parseSyllable, spellTokens } from '../../lib/vietnamese';
@@ -44,7 +45,7 @@ export function Spell({ activity, onDone }: ActivityProps<'spell'>) {
   return (
     <div className="act act-spell">
       <div className="card card-md" aria-hidden="true">
-        <span className="emoji-lg">{pic(word) ?? '🔤'}</span>
+        <Pic emoji={pic(word) ?? '🔤'} className="pic-lg" />
       </div>
       <div className="tiles" role="group" aria-label={`Đánh vần ${word}`}>
         {tokens.map((t, i) => (

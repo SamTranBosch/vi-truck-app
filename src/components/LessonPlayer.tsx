@@ -1,3 +1,4 @@
+import { Glyph } from './Pic';
 import { useState } from 'react';
 import type { Lesson } from '../content/types';
 import { stopSpeaking } from '../lib/audio';
@@ -83,7 +84,7 @@ export function LessonPlayer({ lesson, index = 0, onFinish, onExit }: Props) {
             <li key={i} className={i < step ? 'step done' : i === step ? 'step now' : 'step'} />
           ))}
         </ol>
-        <span className="lesson-tag" lang="vi">{lesson.label}</span>
+        <span className="lesson-tag" lang="vi"><Glyph text={lesson.label} className="pic-tag" /></span>
       </header>
       <div className="lesson-body">{body}</div>
       <div className="lesson-mascot"><Mascot /></div>

@@ -1,3 +1,4 @@
+import { Pic } from '../Pic';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PHRASES } from '../../content/phrases';
 import { traceSay } from '../../content/speech';
@@ -223,7 +224,7 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
       <Dots count={activity.items.length} index={i} />
       <div className="act-actions">
         <SpeakButton text={traceSay(item)} />
-        <button type="button" className="btn btn-round btn-sky" aria-label="Xoá, tô lại" onClick={clear}>🧽</button>
+        <button type="button" className="btn btn-round btn-sky" aria-label="Xoá, tô lại" onClick={clear}><Pic emoji="🧽" className="pic-ui" /></button>
         {fails >= 2 && !ok && <NextButton onClick={advance} glow={false} />}
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { mulberry32 } from '../lib/rng';
 import { Mascot } from './Mascot';
+import { Pic } from './Pic';
 
 interface Props {
   title: string;
@@ -36,7 +37,7 @@ export function Celebration({ title, label, hasPrev, hasNext, onPrev, onNext, on
       <div className="confetti" aria-hidden="true">
         {confetti.map((c, i) => (
           <span key={i} style={{ left: `${c.left}%`, animationDelay: `${c.delay}s`, animationDuration: `${c.dur}s`, fontSize: c.size }}>
-            {c.ch}
+            <Pic emoji={c.ch} />
           </span>
         ))}
       </div>
@@ -44,14 +45,14 @@ export function Celebration({ title, label, hasPrev, hasNext, onPrev, onNext, on
         <div className="celebrate-mascot"><Mascot big forceMood="win" /></div>
         <h2 className="celebrate-title">Giỏi quá!</h2>
         <div className="stars" aria-label="3 sao">
-          <span style={{ animationDelay: '0.2s' }}>⭐</span>
-          <span style={{ animationDelay: '0.5s' }}>⭐</span>
-          <span style={{ animationDelay: '0.8s' }}>⭐</span>
+          <span style={{ animationDelay: '0.2s' }}><Pic emoji="⭐" /></span>
+          <span style={{ animationDelay: '0.5s' }}><Pic emoji="⭐" /></span>
+          <span style={{ animationDelay: '0.8s' }}><Pic emoji="⭐" /></span>
         </div>
         <p className="celebrate-sub" lang="vi">{title}</p>
         <div className="celebrate-actions">
           <button type="button" className="btn btn-round btn-light" aria-label="Bài trước" disabled={!hasPrev} onClick={onPrev}>◀</button>
-          <button type="button" className="btn btn-round btn-sky" aria-label="Về bản đồ" onClick={onMap}>🗺️</button>
+          <button type="button" className="btn btn-round btn-sky" aria-label="Về bản đồ" onClick={onMap}><Pic emoji="🗺️" className="pic-ui" /></button>
           <button type="button" className="btn btn-round btn-go glow" aria-label="Bài tiếp" disabled={!hasNext} onClick={onNext}>▶</button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Pic } from '../Pic';
 import { PICS, pic } from '../../content/pictures';
 import { PHRASES } from '../../content/phrases';
 import { sfx, speak } from '../../lib/audio';
@@ -51,7 +52,7 @@ export function Pick({ activity, onDone }: ActivityProps<'pick'>) {
   return (
     <div className="act act-pick">
       <div className="prompt">
-        {activity.mode === 'read' ? <WordText word={target} className="word-xl" /> : <span className="emoji-lg" aria-hidden="true">👂</span>}
+        {activity.mode === 'read' ? <WordText word={target} className="word-xl" /> : <Pic emoji="👂" className="pic-lg" />}
         <SpeakButton text={target} />
       </div>
       <div className="row-3" role="group" aria-label={activity.mode === 'read' ? `Đọc chữ ${target}` : 'Chọn hình đúng'}>
@@ -63,7 +64,7 @@ export function Pick({ activity, onDone }: ActivityProps<'pick'>) {
             aria-label={`hình ${w}`}
             onClick={() => tap(w)}
           >
-            <span className="emoji-lg" aria-hidden="true">{pic(w)}</span>
+            <Pic emoji={pic(w) ?? '🔤'} className="pic-lg" />
           </button>
         ))}
       </div>

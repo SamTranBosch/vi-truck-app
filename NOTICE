@@ -1,0 +1,10 @@
+Xe Học Chữ — third-party material
+
+Pictures in src/assets/noto/*.svg are Noto Emoji by Google, licensed under the Apache License 2.0
+(https://github.com/googlefonts/noto-emoji). They were extracted from the @svgmoji/noto sprite
+(MIT) with scripts/extract-pics.mjs. 1faba.svg (nest) is original artwork for this project.
+
+Fonts: Baloo 2 and Andika (SIL Open Font License 1.1) via @fontsource.
+
+The lesson wording, the fire-truck drawing, the mascot and the sounds are original to this project.
+No picture or text is copied from the textbook.
