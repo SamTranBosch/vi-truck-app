@@ -112,7 +112,7 @@ Done
 - Optional hero picture: put `truck.png|jpg|webp` (3:4) in `src/assets/hero/` and the map shows it under the mud instead of the built-in drawing.
 Canva (connected 2026-11-20)
 - `generate-image` works and gave a good 3:4 fire-truck picture (Canva media id MAHbbX5UUaU, kept in the user's Canva account).
-- Only a 150x199 preview reaches the workspace and the workspace cannot reach Canva's download hosts, so the full-size file has to be exported by the user (Canva -> Share -> Download -> PNG) and dropped into `src/assets/hero/truck.png`.
+- Only a 150x199 preview reaches the workspace and the workspace cannot reach Canva's download hosts, so the full-size file has to be exported by the user (Canva -> Share -> Download -> PNG) and dropped into `src/assets/hero/truck.webp` (already done: truck, mascot and celebration are in, resized to webp).
 - Ideas once that works: a sticker sheet per lesson hue, a nicer mascot, a celebration background.
 Not done / ideas
 - Hand-drawn or Canva-generated pictures per word (80+) would look more unified than Noto; needs a download route for each file.

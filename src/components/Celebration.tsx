@@ -45,7 +45,7 @@ export function Celebration({ title, label, hasPrev, hasNext, onPrev, onNext, on
         ))}
       </div>
       <div className="celebrate-card">
-        <div className="celebrate-mascot"><Mascot big forceMood="win" /></div>
+        {!BG && <div className="celebrate-mascot"><Mascot big forceMood="win" /></div>}
         <h2 className="celebrate-title">Giỏi quá!</h2>
         <div className="stars" aria-label="3 sao">
           <span style={{ animationDelay: '0.2s' }}><Pic emoji="⭐" /></span>
