@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { pic } from '../../content/pictures';
 import { speak } from '../../lib/audio';
-import { Dots, NextButton, SpeakButton, WordText } from '../shared';
+import { Dots, NextButton, PrevButton, SpeakButton, WordText } from '../shared';
 import type { ActivityProps } from './types';
 
 /** Làm quen: look at the picture, tap to hear the word. */
@@ -22,6 +22,7 @@ export function Meet({ activity, onDone }: ActivityProps<'meet'>) {
       </button>
       <Dots count={activity.words.length} index={i} />
       <div className="act-actions">
+        {i > 0 && <PrevButton onClick={() => setI(i - 1)} />}
         <SpeakButton text={word} />
         <NextButton onClick={() => (last ? onDone() : setI(i + 1))} />
       </div>

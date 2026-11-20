@@ -12,6 +12,8 @@ export function audioKey(text: string): string {
   return [...text.trim().normalize('NFC')].map((c) => c.codePointAt(0)!.toString(16)).join('_');
 }
 
+import { getAudioContext } from './ctx';
+
 export interface AudioBackend {
   play(text: string): Promise<void>;
   stop(): void;
@@ -123,16 +125,40 @@ export function audioClipCount(): number {
   return backend instanceof BrowserAudio ? backend.clipCount() : 0;
 }
 
+let speakingListener: ((speaking: boolean) => void) | null = null;
+let speakingCount = 0;
+/** Lets other modules (the music) know while the teacher is talking. */
+export function setSpeakingListener(fn: ((speaking: boolean) => void) | null): void {
+  speakingListener = fn;
+}
+async function withSpeaking(p: Promise<void>): Promise<void> {
+  speakingCount++;
+  speakingListener?.(true);
+  try {
+    await p;
+  } finally {
+    speakingCount = Math.max(0, speakingCount - 1);
+    if (speakingCount === 0) speakingListener?.(false);
+  }
+}
+
 export function speak(text: string): Promise<void> {
   if (!soundOn || !text) return Promise.resolve();
-  return backend.play(text);
+  return withSpeaking(backend.play(text));
 }
 
 /** Speaks several texts one after another (used for "cờ – a – ca"). */
 export async function speakSeq(texts: string[]): Promise<void> {
-  for (const t of texts) {
-    if (!soundOn) return;
-    await backend.play(t);
+  speakingCount++;
+  speakingListener?.(true);
+  try {
+    for (const t of texts) {
+      if (!soundOn) return;
+      await backend.play(t);
+    }
+  } finally {
+    speakingCount = Math.max(0, speakingCount - 1);
+    if (speakingCount === 0) speakingListener?.(false);
   }
 }
 
@@ -159,8 +185,8 @@ export function unlockAudio(): void {
 
 // ---- tiny sound effects (no files needed) ----
 
-let ctx: AudioContext | null = null;
 function tone(freq: number, start: number, dur: number, type: OscillatorType = 'sine', vol = 0.12): void {
+  const ctx = getAudioContext();
   if (!ctx) return;
   const o = ctx.createOscillator();
   const g = ctx.createGain();
@@ -176,13 +202,19 @@ function tone(freq: number, start: number, dur: number, type: OscillatorType = '
 
 export type Sfx = 'good' | 'bad' | 'win' | 'tap';
 
+/** The on-screen mascot reacts to the same events as the sound effects (even when muted). */
+function emitMood(kind: Sfx): void {
+  try {
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('mascot', { detail: kind }));
+  } catch {
+    /* cosmetic only */
+  }
+}
+
 export function sfx(kind: Sfx): void {
+  emitMood(kind);
   if (!soundOn) return;
   try {
-    const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    ctx ??= new AC();
-    if (ctx.state === 'suspended') void ctx.resume();
     if (kind === 'good') {
       tone(660, 0, 0.14);
       tone(880, 0.1, 0.2);

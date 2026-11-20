@@ -87,6 +87,11 @@ describe('App flow', () => {
       await tick(1300);
     }
     await tick(1000);
+    // celebration screen first, with a way back to the map and to the next lesson
+    expect(screen.getByRole('dialog', { name: /Hoàn thành/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bài trước' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Bài tiếp' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Về bản đồ' }));
     // back on the map
     expect(screen.getByText('🧽 1/16')).toBeInTheDocument();
     expect(tile('mo-dau')).toHaveClass('hit-done');
@@ -95,6 +100,25 @@ describe('App flow', () => {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
     expect(Object.keys(saved.completed)).toEqual(['mo-dau']);
     expect(spoken).toContain('Bé đã lau xong một mảnh bùn!');
+  });
+
+  it('the lesson bar can step back to the previous activity, and celebration can open the next lesson', async () => {
+    await boot();
+    fireEvent.click(tile('mo-dau'));
+    const back = screen.getByRole('button', { name: 'Quay lại bước trước' });
+    expect(back).toBeDisabled();
+    const meet = WORLD1[0].activities[0];
+    if (meet.type !== 'meet') throw new Error('mo-dau must start with meet');
+    // Meet has its own back-to-previous-card button after the first card
+    expect(screen.queryByRole('button', { name: 'Quay lại' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(screen.getByRole('button', { name: 'Quay lại' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Quay lại' }));
+    expect(screen.queryByRole('button', { name: 'Quay lại' })).toBeNull();
+    for (let i = 0; i < meet.words.length; i++) fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(document.querySelector('.act-pick')).not.toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Quay lại bước trước' }));
+    expect(document.querySelector('.act-meet')).not.toBeNull();
   });
 
   it('restores saved progress on start', async () => {

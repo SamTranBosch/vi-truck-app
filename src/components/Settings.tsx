@@ -60,6 +60,15 @@ export function Settings({ progress, onChange, onReset, onClose }: Props) {
           />
           Bật âm thanh
         </label>
+        <label className="row-check">
+          <input
+            type="checkbox"
+            checked={progress.musicOn}
+            disabled={!progress.soundOn}
+            onChange={(e) => onChange({ ...progress, musicOn: e.target.checked })}
+          />
+          Nhạc nền (nhỏ, tự giảm khi cô nói)
+        </label>
         <p className="small">
           {clips > 0 ? `Giọng cô giáo: ${clips} đoạn âm thanh có sẵn trong máy.` : 'Đang dùng giọng đọc của thiết bị (chưa có âm thanh cô giáo).'}
         </p>

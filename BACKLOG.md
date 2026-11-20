@@ -97,3 +97,10 @@ Open:
 - [ ] Letter names/tone names by TTS may sound wrong ("a", "cờ", "huyền"): have a native speaker review; replace with real recordings (see BACKLOG "real voice").
 - [ ] Mixed voice problem: while only some clips exist, the app mixes teacher clips and the device voice. Generate all clips in one run.
 - [ ] Licensing: check the provider's terms for redistributing the generated audio inside a published app (free tier terms may limit commercial use).
+
+## Feedback round 2 (2026-11-20)
+Done: background music (code-composed, default on, very low, dips while the teacher speaks, pauses when the app is hidden; toggle "Nhạc nền" in the parent area), back buttons (lesson bar ◀ = previous activity; ◀ on Meet/Story cards = previous card; celebration screen ◀ / 🗺️ / ▶ = previous lesson / map / next lesson), kid-appeal pass (mascot "Bé Xe" that reacts to right/wrong, per-lesson colours and clouds, pop-in animations, celebration screen with confetti + 3 stars), layout fixes found at 360 px width (3-card row, review syllable grid now turns on its side when there are more vowels than consonants).
+Open:
+- [ ] Music taste: only the user's ears can judge "funny but not distracting". Volume constants are `BASE_VOLUME` / `DUCKED_VOLUME` in `src/lib/music.ts`; tempo `BPM`. A real royalty-free track could replace it later.
+- [ ] Not verified on a real iPhone: music start after first tap, ducking while the iOS voice speaks, silent switch behaviour (iOS mutes WebAudio when the ring/silent switch is on silent).
+- [ ] Textbook content/pictures: see conversation. Open decision on copyright for using the PDF's pictures in a public repo.

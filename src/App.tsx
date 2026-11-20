@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PHRASES } from './content/phrases';
 import { WORLD1, WORLD1_IDS } from './content/world1';
+import { Celebration } from './components/Celebration';
 import { LessonPlayer } from './components/LessonPlayer';
 import { Settings } from './components/Settings';
 import { TruckScene } from './components/TruckScene';
-import { loadAudioManifest, setSoundEnabled, sfx, speak, unlockAudio } from './lib/audio';
+import { loadAudioManifest, setSoundEnabled, setSpeakingListener, sfx, speak, unlockAudio } from './lib/audio';
+import { duckMusic, setMusicEnabled, startMusic } from './lib/music';
 import {
   doneCount,
   emptyProgress,
@@ -21,6 +23,7 @@ export function App() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [playing, setPlaying] = useState<string | null>(null);
   const [justWiped, setJustWiped] = useState<string | null>(null);
+  const [celebrate, setCelebrate] = useState<{ id: string; first: boolean } | null>(null);
   const [parentOpen, setParentOpen] = useState(false);
   const [hint, setHint] = useState('');
   const holdTimer = useRef<number | null>(null);
@@ -31,16 +34,20 @@ export function App() {
     void loadProgress().then((p) => {
       if (!alive) return;
       setSoundEnabled(p.soundOn);
+      setMusicEnabled(p.soundOn && p.musicOn);
       setProgress(p);
     });
     void loadAudioManifest();
+    setSpeakingListener(duckMusic);
     return () => {
       alive = false;
+      setSpeakingListener(null);
     };
   }, []);
 
   const update = useCallback((p: Progress) => {
     setSoundEnabled(p.soundOn);
+    setMusicEnabled(p.soundOn && p.musicOn);
     setProgress(p);
     void saveProgress(p);
   }, []);
@@ -49,6 +56,7 @@ export function App() {
     if (unlocked.current) return;
     unlocked.current = true;
     unlockAudio();
+    startMusic();
   };
 
   const finish = (lessonId: string) => {
@@ -58,12 +66,24 @@ export function App() {
     update(next);
     void requestPersistence();
     setPlaying(null);
+    setCelebrate({ id: lessonId, first: !already });
+    sfx('win');
     if (!already) {
-      setJustWiped(lessonId);
-      sfx('win');
       const all = doneCount(WORLD1_IDS, next) === WORLD1_IDS.length;
       void speak(all ? PHRASES.worldDone : PHRASES.lessonDone);
     }
+  };
+
+  const openLesson = (id: string) => {
+    setJustWiped(null);
+    setCelebrate(null);
+    setPlaying(id);
+  };
+
+  const closeCelebration = () => {
+    // the mud wipe is played on the map, after the celebration
+    if (celebrate?.first) setJustWiped(celebrate.id);
+    setCelebrate(null);
   };
 
   const showHint = (text: string) => {
@@ -90,7 +110,7 @@ export function App() {
   return (
     <div className="app" onPointerDownCapture={firstTap}>
       {lesson ? (
-        <LessonPlayer lesson={lesson} onFinish={() => finish(lesson.id)} onExit={() => setPlaying(null)} />
+        <LessonPlayer lesson={lesson} index={WORLD1.indexOf(lesson)} onFinish={() => finish(lesson.id)} onExit={() => setPlaying(null)} />
       ) : (
         <main className="map">
           <header className="map-bar">
@@ -115,10 +135,7 @@ export function App() {
             lessons={WORLD1}
             progress={progress}
             justWiped={justWiped}
-            onOpen={(id) => {
-              setJustWiped(null);
-              setPlaying(id);
-            }}
+            onOpen={openLesson}
             onLocked={() => showHint(PHRASES.notYet)}
           />
           <p className="banner" role="status" aria-live="polite">
@@ -126,12 +143,26 @@ export function App() {
           </p>
         </main>
       )}
+      {celebrate && (() => {
+        const idx = WORLD1.findIndex((l) => l.id === celebrate.id);
+        return (
+          <Celebration
+            title={WORLD1[idx].title}
+            label={WORLD1[idx].label}
+            hasPrev={idx > 0}
+            hasNext={idx < WORLD1.length - 1}
+            onPrev={() => openLesson(WORLD1[idx - 1].id)}
+            onNext={() => openLesson(WORLD1[idx + 1].id)}
+            onMap={closeCelebration}
+          />
+        );
+      })()}
       {parentOpen && (
         <Settings
           progress={progress}
           onChange={update}
           onReset={() => {
-            update({ ...emptyProgress(), soundOn: progress.soundOn });
+            update({ ...emptyProgress(), soundOn: progress.soundOn, musicOn: progress.musicOn });
             setJustWiped(null);
           }}
           onClose={() => setParentOpen(false)}

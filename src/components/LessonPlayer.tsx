@@ -9,21 +9,29 @@ import { Pick } from './activities/Pick';
 import { Spell } from './activities/Spell';
 import { Story } from './activities/Story';
 import { Trace } from './activities/Trace';
+import { Mascot } from './Mascot';
 
 interface Props {
   lesson: Lesson;
+  /** position of the lesson in the world; gives each lesson its own colour */
+  index?: number;
   onFinish: () => void;
   onExit: () => void;
 }
 
 /** Plays a lesson's activities one after another. */
-export function LessonPlayer({ lesson, onFinish, onExit }: Props) {
+export function LessonPlayer({ lesson, index = 0, onFinish, onExit }: Props) {
   const [step, setStep] = useState(0);
   const activity = lesson.activities[step];
 
   const done = () => {
     if (step === lesson.activities.length - 1) onFinish();
     else setStep(step + 1);
+  };
+
+  const back = () => {
+    stopSpeaking();
+    setStep((s) => Math.max(0, s - 1));
   };
 
   const exit = () => {
@@ -62,10 +70,13 @@ export function LessonPlayer({ lesson, onFinish, onExit }: Props) {
   }
 
   return (
-    <section className="lesson" aria-label={lesson.title}>
+    <section className="lesson" aria-label={lesson.title} style={{ ['--lesson-hue' as string]: `${(index * 47) % 360}` }}>
       <header className="lesson-bar">
         <button type="button" className="btn btn-round btn-light" aria-label="Thoát bài học" onClick={exit}>
           ✕
+        </button>
+        <button type="button" className="btn btn-round btn-light" aria-label="Quay lại bước trước" disabled={step === 0} onClick={back}>
+          ◀
         </button>
         <ol className="steps" aria-label={`Bước ${step + 1} trên ${lesson.activities.length}`}>
           {lesson.activities.map((_, i) => (
@@ -75,6 +86,7 @@ export function LessonPlayer({ lesson, onFinish, onExit }: Props) {
         <span className="lesson-tag" lang="vi">{lesson.label}</span>
       </header>
       <div className="lesson-body">{body}</div>
+      <div className="lesson-mascot"><Mascot /></div>
     </section>
   );
 }

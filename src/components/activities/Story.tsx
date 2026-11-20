@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { PHRASES } from '../../content/phrases';
 import { sfx, speak } from '../../lib/audio';
 import { shuffleDifferent } from '../../lib/rng';
-import { Dots, NextButton, SpeakButton, cheer, useLater } from '../shared';
+import { Dots, NextButton, PrevButton, SpeakButton, cheer, useLater } from '../shared';
 import type { ActivityProps } from './types';
 
 /** Kể chuyện: listen to the story, then tap the pictures in story order. */
@@ -34,6 +34,7 @@ export function Story({ activity, onDone }: ActivityProps<'story'>) {
         </button>
         <Dots count={scenes.length} index={i} />
         <div className="act-actions">
+          {i > 0 && <PrevButton onClick={() => setI(i - 1)} />}
           <SpeakButton text={scene.text} />
           <NextButton onClick={() => (last ? setPhase('order') : setI(i + 1))} />
         </div>

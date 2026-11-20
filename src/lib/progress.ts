@@ -5,12 +5,14 @@ export interface Progress {
   /** lesson id -> time it was finished (ms since epoch) */
   completed: Record<string, number>;
   soundOn: boolean;
+  /** background music; default on */
+  musicOn: boolean;
 }
 
 export const STORAGE_KEY = 'xe-hoc-chu:progress';
 
 export function emptyProgress(): Progress {
-  return { version: 1, completed: {}, soundOn: true };
+  return { version: 1, completed: {}, soundOn: true, musicOn: true };
 }
 
 /** Accepts anything and returns a valid Progress, or null when the shape is wrong. */
@@ -30,7 +32,7 @@ export function parseProgress(raw: unknown): Progress | null {
   for (const [k, v] of Object.entries(d.completed)) {
     if (typeof v === 'number' && Number.isFinite(v)) completed[k] = v;
   }
-  return { version: 1, completed, soundOn: d.soundOn !== false };
+  return { version: 1, completed, soundOn: d.soundOn !== false, musicOn: d.musicOn !== false };
 }
 
 export function exportProgress(p: Progress): string {

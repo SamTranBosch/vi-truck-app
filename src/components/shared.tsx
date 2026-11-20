@@ -35,6 +35,14 @@ export function SpeakButton({ text, label = 'Nghe lại' }: { text: string; labe
   );
 }
 
+export function PrevButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button type="button" className="btn btn-round btn-light" aria-label="Quay lại" onClick={onClick}>
+      ◀
+    </button>
+  );
+}
+
 export function NextButton({ onClick, glow = true }: { onClick: () => void; glow?: boolean }) {
   return (
     <button type="button" className={`btn btn-round btn-go${glow ? ' glow' : ''}`} aria-label="Tiếp" onClick={onClick}>

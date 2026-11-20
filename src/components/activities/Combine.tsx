@@ -11,6 +11,9 @@ export function Combine({ activity, onDone }: ActivityProps<'combine'>) {
   const [heard, setHeard] = useState<Set<string>>(new Set());
   const [last, setLast] = useState('');
   const later = useLater();
+  const rowsAreOnsets = onsets.length >= vowels.length;
+  const rowItems = rowsAreOnsets ? onsets : vowels;
+  const colItems = rowsAreOnsets ? vowels : onsets;
 
   useEffect(() => {
     void speak(PHRASES.combine);
@@ -41,24 +44,27 @@ export function Combine({ activity, onDone }: ActivityProps<'combine'>) {
       <div className="prompt">
         <span className="target-badge" aria-live="polite">{last || '·'}</span>
       </div>
+      {/* The longer list runs down the page, so every column stays wide enough for a child's finger. */}
       <table className="combine-grid">
         <thead>
           <tr>
             <th />
-            {vowels.map((v) => (
-              <th key={v}>
-                <button type="button" className="head-btn" onClick={() => void speak(letterSay(v))}>{v}</button>
+            {colItems.map((c) => (
+              <th key={c}>
+                <button type="button" className="head-btn" onClick={() => void speak(letterSay(c))}>{c}</button>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {onsets.map((o) => (
-            <tr key={o}>
+          {rowItems.map((r) => (
+            <tr key={r}>
               <th>
-                <button type="button" className="head-btn" onClick={() => void speak(letterSay(o))}>{o}</button>
+                <button type="button" className="head-btn" onClick={() => void speak(letterSay(r))}>{r}</button>
               </th>
-              {vowels.map((v) => {
+              {colItems.map((c) => {
+                const o = rowsAreOnsets ? r : c;
+                const v = rowsAreOnsets ? c : r;
                 const key = o + v;
                 const isBlocked = blocked.includes(key);
                 return (

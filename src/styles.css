@@ -144,8 +144,10 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 .word-md { font-size: 1.5rem; }
 .mark { color: var(--red); }
 .story-text { font-family: var(--font-text); font-size: 1.3rem; text-align: center; line-height: 1.4; }
-.grid-2 { width: min(100%, 360px); display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.row-3 { width: min(100%, 420px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid-2 { width: min(100%, 360px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.row-3 { width: min(100%, 420px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.row-3 .emoji-lg { font-size: 3.4rem; }
+.row-3 .card-pick { padding: 8px; }
 .order-num { position: absolute; top: 6px; left: 8px; width: 34px; height: 34px; border-radius: 50%; background: var(--sun); border: 3px solid var(--ink); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; }
 
 .target-badge {
@@ -167,7 +169,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 .tile-btn.kind-word { background: #fff3c4; }
 
 /* ---------- find letters ---------- */
-.letter-field { width: min(100%, 380px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.letter-field { width: min(100%, 380px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .letter-btn { height: 84px; background: #fff; border: 4px solid var(--ink); border-radius: 20px; box-shadow: var(--shadow); font-family: var(--font-text); font-weight: 700; font-size: 2.6rem; }
 .letter-btn.found { background: #d8f5df; border-color: var(--leaf); color: var(--leaf); }
 
@@ -178,9 +180,9 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 .trace-ink { touch-action: none; }
 
 /* ---------- combine grid ---------- */
-.combine-grid { border-collapse: separate; border-spacing: 6px; }
-.head-btn { width: 52px; height: 48px; border: 3px solid var(--ink); border-radius: 12px; background: var(--sun); font-family: var(--font-text); font-weight: 700; font-size: 1.4rem; }
-.cell-btn { width: 56px; height: 48px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; font-family: var(--font-text); font-weight: 700; font-size: 1.2rem; padding: 0; }
+.combine-grid { border-collapse: separate; border-spacing: 5px; width: min(100%, 420px); table-layout: fixed; }
+.head-btn { width: 100%; height: 48px; padding: 0; border: 3px solid var(--ink); border-radius: 12px; background: var(--sun); font-family: var(--font-text); font-weight: 700; font-size: 1.4rem; }
+.cell-btn { width: 100%; height: 48px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; font-family: var(--font-text); font-weight: 700; font-size: 1.2rem; padding: 0; }
 .cell-btn.done { background: #d8f5df; border-color: var(--leaf); }
 .cell-btn.blocked { background: #e6e6e6; color: #999; border-style: dashed; }
 
@@ -204,3 +206,84 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* ======================= kid appeal ======================= */
+.lesson {
+  position: relative;
+  background:
+    linear-gradient(180deg, hsl(var(--lesson-hue, 200) 85% 89%) 0%, hsl(var(--lesson-hue, 200) 90% 96%) 45%, #fffaf0 100%);
+  overflow: hidden;
+}
+/* soft clouds drifting slowly behind the activity */
+.lesson::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.85;
+  background:
+    radial-gradient(ellipse 60px 22px at 20% 14%, #fff 60%, transparent 62%),
+    radial-gradient(ellipse 44px 16px at 28% 12%, #fff 60%, transparent 62%),
+    radial-gradient(ellipse 70px 24px at 78% 26%, #fff 60%, transparent 62%),
+    radial-gradient(ellipse 50px 18px at 70% 24%, #fff 60%, transparent 62%),
+    radial-gradient(ellipse 56px 20px at 40% 62%, #ffffffaa 60%, transparent 62%);
+  background-repeat: no-repeat;
+  animation: drift 40s linear infinite alternate;
+}
+@keyframes drift { from { transform: translateX(-3%); } to { transform: translateX(3%); } }
+.lesson-bar, .lesson-body, .lesson-mascot { position: relative; z-index: 1; }
+.lesson-body { padding-bottom: 76px; }
+.lesson-mascot { position: absolute; right: 8px; bottom: 6px; width: 76px; height: 76px; pointer-events: none; z-index: 2; }
+
+.act { animation: act-in 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) both; }
+@keyframes act-in { from { opacity: 0; transform: translateY(18px) scale(0.94); } to { opacity: 1; transform: none; } }
+
+.emoji-xl, .emoji-lg { display: inline-block; animation: emoji-bob 2.8s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes emoji-bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
+.card-xl { background: linear-gradient(180deg, #fff 0%, hsl(var(--lesson-hue, 200) 100% 97%) 100%); }
+.card-pick:active .emoji-lg { transform: scale(1.15); }
+.card-pick.found { animation: found-pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes found-pop { 0% { transform: scale(1); } 40% { transform: scale(1.12) rotate(-2deg); } 100% { transform: scale(1); } }
+.target-badge { animation: badge-wobble 2.4s ease-in-out infinite; }
+@keyframes badge-wobble { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg) scale(1.04); } }
+.btn-go { background: linear-gradient(180deg, #5fd48a, #2fa05c); }
+.btn-sky { background: linear-gradient(180deg, #8fd8f8, #5bb9e6); }
+.step.now { animation: glow-step 1.2s ease-in-out infinite; }
+@keyframes glow-step { 50% { box-shadow: 0 0 0 4px rgba(255, 200, 61, 0.5); } }
+
+/* ---------- mascot "Bé Xe" ---------- */
+.mascot { position: relative; width: 100%; height: 100%; animation: mascot-idle 2.6s ease-in-out infinite; transform-origin: 50% 100%; }
+.mascot.big { width: 150px; height: 150px; }
+@keyframes mascot-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px) rotate(-1.5deg); } }
+.mood-good { animation: mascot-hop 0.6s ease-out; }
+@keyframes mascot-hop { 0% { transform: translateY(0) scale(1, 1); } 25% { transform: translateY(2px) scale(1.1, 0.9); } 55% { transform: translateY(-22px) scale(0.95, 1.08) rotate(-4deg); } 100% { transform: translateY(0) scale(1); } }
+.mood-oops { animation: mascot-tilt 0.7s ease-in-out; }
+@keyframes mascot-tilt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-9deg) translateX(-3px); } 65% { transform: rotate(6deg); } }
+.mood-win { animation: mascot-party 0.7s ease-in-out infinite; }
+@keyframes mascot-party { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-14px) rotate(4deg); } }
+.siren-a { animation: siren 0.7s steps(1) infinite; }
+.siren-b { animation: siren 0.7s steps(1) infinite 0.35s; }
+@keyframes siren { 0% { opacity: 1; } 50% { opacity: 0.25; } }
+.spark { position: absolute; font-size: 22px; animation: spark-up 0.9s ease-out forwards; pointer-events: none; }
+.mascot.big .spark { font-size: 30px; animation-duration: 1.6s; animation-iteration-count: infinite; }
+.s1 { left: -6%; top: 10%; } .s2 { right: -4%; top: 0; animation-delay: 0.15s; } .s3 { left: 40%; top: -12%; animation-delay: 0.3s; }
+@keyframes spark-up { 0% { opacity: 0; transform: translateY(10px) scale(0.4); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-34px) scale(1.2) rotate(30deg); } }
+
+/* ---------- lesson complete ---------- */
+.celebrate { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 16px;
+  background: radial-gradient(circle at 50% 40%, #fff6c9 0%, #ffe08a 45%, #ffb347 100%); animation: fade-in 0.3s both; overflow: hidden; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti span { position: absolute; top: -48px; animation-name: confetti-fall; animation-timing-function: linear; animation-iteration-count: infinite; }
+@keyframes confetti-fall { 0% { transform: translateY(0) rotate(0); } 100% { transform: translateY(110vh) rotate(540deg); } }
+.celebrate-card { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.celebrate-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 3.2rem; color: #c2321f; text-shadow: 0 3px 0 #fff, 0 6px 0 rgba(31, 43, 71, 0.25); animation: title-pop 0.7s cubic-bezier(0.2, 1.8, 0.4, 1) both 0.15s; }
+@keyframes title-pop { from { transform: scale(0.2) rotate(-12deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.stars { display: flex; gap: 6px; font-size: 3.4rem; }
+.stars span { display: inline-block; animation: star-in 0.6s cubic-bezier(0.2, 1.8, 0.4, 1) both; }
+@keyframes star-in { from { transform: scale(0) rotate(-120deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.celebrate-sub { margin: 0 0 8px; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
+.celebrate-actions { display: flex; gap: 18px; margin-top: 6px; }
+.celebrate-actions .btn-round { width: 76px; height: 76px; font-size: 2rem; }
+.celebrate-actions .btn:disabled { opacity: 0.35; box-shadow: none; cursor: default; }
+.lesson-bar .btn:disabled { opacity: 0.35; box-shadow: none; }
+
+.act-story-order .prompt { flex-wrap: wrap; }
+.act-story-order .prompt .emoji-lg { font-size: 2.2rem; }

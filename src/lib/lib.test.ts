@@ -51,7 +51,7 @@ describe('progress', () => {
 
   it('drops entries that are not timestamps', () => {
     const p = parseProgress({ version: 1, completed: { a: 5, b: 'x', c: null }, soundOn: false });
-    expect(p).toEqual({ version: 1, completed: { a: 5 }, soundOn: false });
+    expect(p).toEqual({ version: 1, completed: { a: 5 }, soundOn: false, musicOn: true });
   });
 });
 
