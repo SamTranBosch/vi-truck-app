@@ -1,6 +1,9 @@
 import { Pic } from './Pic';
 import { useEffect, useRef, useState } from 'react';
 
+/** Optional Canva picture of the mascot (src/assets/hero/mascot.png|jpg|webp); the drawn SVG is used when absent. */
+const MASCOT_IMG = Object.values(import.meta.glob('../assets/hero/mascot.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>)[0];
+
 type Mood = 'idle' | 'good' | 'oops' | 'win';
 
 /**
@@ -31,6 +34,9 @@ export function Mascot({ big = false, forceMood }: { big?: boolean; forceMood?: 
   const happy = m === 'good' || m === 'win';
   return (
     <div className={`mascot mood-${m}${big ? ' big' : ''}`} aria-hidden="true" data-mood={m}>
+      {MASCOT_IMG ? (
+        <img className="mascot-img" src={MASCOT_IMG} alt="" draggable={false} />
+      ) : (
       <svg viewBox="0 0 120 120" width="100%" height="100%">
         {/* flashing siren */}
         <g stroke="#1F2B47" strokeWidth="3" strokeLinejoin="round">
@@ -66,6 +72,7 @@ export function Mascot({ big = false, forceMood }: { big?: boolean; forceMood?: 
           <path d="M50 78 Q60 87 70 78" fill="none" stroke="#1F2B47" strokeWidth="3.5" strokeLinecap="round" />
         )}
       </svg>
+      )}
       {happy && (
         <>
           <span className="spark s1"><Pic emoji="⭐" /></span>

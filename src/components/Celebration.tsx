@@ -13,6 +13,9 @@ interface Props {
   onMap: () => void;
 }
 
+/** Optional Canva background (src/assets/hero/celebrate.png|jpg|webp). */
+const BG = Object.values(import.meta.glob('../assets/hero/celebrate.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>)[0];
+
 const PIECES = ['⭐', '🎉', '✨', '🌟', '🎈', '💛'];
 
 /** After each lesson: confetti, a happy truck, three stars, and where to go next. */
@@ -33,7 +36,7 @@ export function Celebration({ title, label, hasPrev, hasNext, onPrev, onNext, on
   }, []);
 
   return (
-    <div className="celebrate" role="dialog" aria-modal="true" aria-label={`Hoàn thành ${title}`}>
+    <div className={`celebrate${BG ? ' has-bg' : ''}`} style={BG ? { ['--celebrate-bg' as string]: `url(${BG})` } : undefined} role="dialog" aria-modal="true" aria-label={`Hoàn thành ${title}`}>
       <div className="confetti" aria-hidden="true">
         {confetti.map((c, i) => (
           <span key={i} style={{ left: `${c.left}%`, animationDelay: `${c.delay}s`, animationDuration: `${c.dur}s`, fontSize: c.size }}>

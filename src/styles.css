@@ -321,3 +321,5 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 .map { justify-content: flex-start; padding-top: max(18px, 4dvh); }
 .map { justify-content: center; padding-top: 8px; }
 .play-next { width: 112px; height: 84px; border-radius: 42px; font-size: 2.6rem; display: grid; place-items: center; margin-top: 6px; }
+.mascot-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; -webkit-user-drag: none; }
+.celebrate.has-bg { background-image: var(--celebrate-bg); background-size: cover; background-position: center; }
