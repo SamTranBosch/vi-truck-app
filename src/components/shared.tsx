@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { PHRASES } from '../content/phrases';
 import { sfx, speak } from '../lib/audio';
 import { parseSyllable } from '../lib/vietnamese';
@@ -26,6 +26,23 @@ export function useLater(): (fn: () => void, ms: number) => void {
   return (fn, ms) => {
     ids.current.push(window.setTimeout(fn, ms));
   };
+}
+
+/**
+ * After a quiet moment the app nudges a right answer (it wiggles). Any tap, and any change of `resetKey`, restarts the wait.
+ * `candidates` are the answers still to find; nothing happens when the list is empty.
+ */
+export function useIdleHint(resetKey: unknown, candidates: string[], delayMs = 9000): string | null {
+  const [hint, setHint] = useState<string | null>(null);
+  const list = candidates.join('|');
+  useEffect(() => {
+    setHint(null);
+    if (!list) return;
+    const options = list.split('|');
+    const id = window.setTimeout(() => setHint(options[Math.floor(Math.random() * options.length)]), delayMs);
+    return () => window.clearTimeout(id);
+  }, [resetKey, list, delayMs]);
+  return hint;
 }
 
 export function SpeakButton({ text, label = 'Nghe lại' }: { text: string; label?: string }) {

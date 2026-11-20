@@ -4,7 +4,7 @@ import { PICS, pic } from '../../content/pictures';
 import { PHRASES } from '../../content/phrases';
 import { sfx, speak } from '../../lib/audio';
 import { shuffle } from '../../lib/rng';
-import { Dots, SpeakButton, WordText, cheer, useLater } from '../shared';
+import { Dots, SpeakButton, WordText, cheer, useIdleHint, useLater } from '../shared';
 import type { ActivityProps } from './types';
 
 /**
@@ -23,6 +23,8 @@ export function Pick({ activity, onDone }: ActivityProps<'pick'>) {
     const extra = shuffle(Object.keys(PICS).filter((w) => w !== target && !others.includes(w)), round + 11);
     return shuffle([target, ...[...others, ...extra].slice(0, 2)], round * 7 + target.length);
   }, [activity.words, target, round]);
+
+  const hint = useIdleHint(`${round}:${wrong}:${right}`, right ? [] : [target]);
 
   useEffect(() => {
     if (activity.mode === 'hear') void speak(target);
@@ -60,7 +62,7 @@ export function Pick({ activity, onDone }: ActivityProps<'pick'>) {
           <button
             key={w}
             type="button"
-            className={`card card-pick${right === w ? ' found' : ''}${wrong === w ? ' shake' : ''}`}
+            className={`card card-pick${right === w ? ' found' : ''}${wrong === w ? ' shake' : ''}${hint === w ? ' hint' : ''}`}
             aria-label={`hình ${w}`}
             onClick={() => tap(w)}
           >

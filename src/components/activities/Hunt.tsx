@@ -4,7 +4,7 @@ import { pic } from '../../content/pictures';
 import { soundPrompt, tonePrompt } from '../../content/speech';
 import { sfx, speak } from '../../lib/audio';
 import { TONE_MARK, hasSound, hasTone, targetLabel } from '../../lib/vietnamese';
-import { SpeakButton, ToneBadge, WordText, cheer, useLater } from '../shared';
+import { SpeakButton, ToneBadge, WordText, cheer, useIdleHint, useLater } from '../shared';
 import type { ActivityProps } from './types';
 
 /** "Tiếng nào có âm …?" / "…có thanh …?": tap every picture whose word has the sound or tone. */
@@ -20,6 +20,8 @@ export function Hunt({ activity, onDone }: ActivityProps<'hunt'>) {
   const [wrong, setWrong] = useState<string | null>(null);
   const later = useLater();
   const prompt = activity.kind === 'sound' ? soundPrompt(activity.target) : tonePrompt(activity.tone);
+
+  const hint = useIdleHint(`${found.size}:${wrong}`, [...right].filter((w) => !found.has(w)));
 
   useEffect(() => {
     void speak(prompt);
@@ -61,7 +63,7 @@ export function Hunt({ activity, onDone }: ActivityProps<'hunt'>) {
           <button
             key={w}
             type="button"
-            className={`card card-pick${found.has(w) ? ' found' : ''}${wrong === w ? ' shake' : ''}`}
+            className={`card card-pick${found.has(w) ? ' found' : ''}${wrong === w ? ' shake' : ''}${hint === w ? ' hint' : ''}`}
             aria-label={w}
             aria-pressed={found.has(w)}
             onClick={() => tap(w)}

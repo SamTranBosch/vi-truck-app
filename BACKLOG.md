@@ -116,3 +116,7 @@ Canva (connected 2026-11-20)
 - Ideas once that works: a sticker sheet per lesson hue, a nicer mascot, a celebration background.
 Not done / ideas
 - Hand-drawn or Canva-generated pictures per word (80+) would look more unified than Noto; needs a download route for each file.
+
+## UX pass (2026-11-20, evening)
+Done: tablet layout (play button no longer clipped on iPad; lessons scaled up with `zoom` at >= 700 px), idle nudge (`useIdleHint`: after 9 s a right answer wiggles in Hunt and Pick), image sizes confirmed (truck 156 KB, celebration 53 KB, mascot 48 KB).
+Ideas not done: first-run welcome screen with the mascot; "Add to Home Screen" hint for iPhone Safari in the parent area; nudge in FindLetter/Trace; per-lesson resume after leaving mid-lesson; parent progress overview (which letters are still shaky); a landscape-specific map layout for iPad.
