@@ -7,6 +7,7 @@ import { FindLetter } from './activities/FindLetter';
 import { Hunt } from './activities/Hunt';
 import { Meet } from './activities/Meet';
 import { Pick } from './activities/Pick';
+import { Read } from './activities/Read';
 import { Spell } from './activities/Spell';
 import { Story } from './activities/Story';
 import { Trace } from './activities/Trace';
@@ -61,6 +62,9 @@ export function LessonPlayer({ lesson, index = 0, onFinish, onExit }: Props) {
       break;
     case 'pick':
       body = <Pick key={key} activity={activity} onDone={done} />;
+      break;
+    case 'read':
+      body = <Read key={key} activity={activity} onDone={done} />;
       break;
     case 'story':
       body = <Story key={key} activity={activity} onDone={done} />;

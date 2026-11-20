@@ -25,6 +25,8 @@ export const PICS: Record<string, string> = {
   'bánh': '🍰', 'bí': '🎃', 'vẽ': '🎨', 'đũa': '🥢', 'sữa': '🥛', 'võ': '🥋',
   // g h
   'ga': '🚉', 'gấu': '🐻', 'gạo': '🍚', 'gỗ': '🪵', 'hoa': '🌸', 'hành': '🧅',
+  // reading lines (Tập đọc): single words and short lines that have a picture
+  'cò': '🦢', 'ô': '☂️', 'đa': '🌳', 'đò': '⛴️', 'dẻ': '🌰', 'lồ ô': '🎋', 'cá cờ': '🐠', 'cờ đỏ': '🚩', 'le le': '🦆', 'đồ cổ': '🏺',
   // i ia
   'ví': '👛', 'chỉ': '🧵', 'bìa': '📕', 'chìa': '🔑',
 };

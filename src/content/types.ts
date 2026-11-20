@@ -30,6 +30,8 @@ export type Activity =
   | { type: 'pick'; mode: 'hear' | 'read'; words: string[] }
   /** Kể chuyện: listen to the story, then put the pictures in order. */
   | { type: 'story'; story: Story }
+  /** Tập đọc: read words or short lines. Tap a word to hear it; the speaker reads the whole line. */
+  | { type: 'read'; lines: string[] }
   /** Ôn tập: build syllables from a consonant row and a vowel column. */
   | { type: 'combine'; onsets: string[]; vowels: string[]; blocked: string[]; need: number };
 

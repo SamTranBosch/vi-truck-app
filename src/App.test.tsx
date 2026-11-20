@@ -5,6 +5,7 @@ import { Combine } from './components/activities/Combine';
 import { FindLetter } from './components/activities/FindLetter';
 import { Hunt } from './components/activities/Hunt';
 import { Meet } from './components/activities/Meet';
+import { Read } from './components/activities/Read';
 import { Pick } from './components/activities/Pick';
 import { Spell } from './components/activities/Spell';
 import { Story } from './components/activities/Story';
@@ -22,6 +23,7 @@ function ActivityView({ activity, onDone }: { activity: Activity; onDone: () => 
     case 'findLetter': return <FindLetter activity={activity} onDone={onDone} />;
     case 'trace': return <Trace activity={activity} onDone={onDone} />;
     case 'pick': return <Pick activity={activity} onDone={onDone} />;
+    case 'read': return <Read activity={activity} onDone={onDone} />;
     case 'story': return <Story activity={activity} onDone={onDone} />;
     case 'combine': return <Combine activity={activity} onDone={onDone} />;
   }

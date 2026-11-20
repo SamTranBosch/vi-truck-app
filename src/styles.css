@@ -327,3 +327,14 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 .celebrate.has-bg { padding: max(7dvh, 40px) 16px max(8dvh, 40px); place-items: stretch center; }
 .celebrate.has-bg .celebrate-card { height: 100%; }
 .celebrate.has-bg .celebrate-sub { margin-top: auto; background: #fff; border: 3px solid var(--ink); border-radius: 999px; padding: 6px 18px; box-shadow: 0 4px 0 rgba(31, 43, 71, 0.25); }
+
+/* ---- Tập đọc ---- */
+.card-read { width: min(100%, 360px); min-height: clamp(220px, 34dvh, 320px); gap: 14px; background: linear-gradient(180deg, #fff 0%, hsl(var(--lesson-hue, 200) 100% 97%) 100%); }
+.read-words { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; }
+.read-word { border: 0; background: transparent; padding: 4px 8px; border-radius: 16px; cursor: pointer; font: inherit; color: var(--ink); transition: background 0.2s, transform 0.1s; }
+.read-word:active { transform: translateY(2px) scale(0.97); }
+.read-word.said { background: hsl(var(--lesson-hue, 200) 90% 90%); }
+.word-read { font-size: clamp(2.2rem, 11vw, 3.2rem); }
+.pic-n2 img { width: 50%; }
+.pic-n3 img { width: 33.3%; }
+.num-chips i { width: 30px; height: 30px; font-size: 0.95rem; }

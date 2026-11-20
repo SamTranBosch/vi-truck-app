@@ -30,6 +30,16 @@ export function combineSay(onset: string, vowel: string): string {
   return onset + vowel;
 }
 
+/** The words of a reading line, without punctuation: "Bé Hà ở bờ hồ." -> ["Bé", "Hà", "ở", "bờ", "hồ"]. */
+export function readWords(line: string): string[] {
+  return line.replace(/[.,!?;:]/g, ' ').split(/\s+/).filter(Boolean);
+}
+
+/** What the voice says for a whole reading line (no punctuation, so it matches the audio clip). */
+export function readSay(line: string): string {
+  return readWords(line).join(' ');
+}
+
 function activitySpeech(a: Activity): string[] {
   switch (a.type) {
     case 'meet':
@@ -46,6 +56,8 @@ function activitySpeech(a: Activity): string[] {
       return a.words;
     case 'story':
       return a.story.scenes.map((s) => s.text);
+    case 'read':
+      return [PHRASES.readAloud, ...a.lines.flatMap((l) => [readSay(l), ...readWords(l)])];
     case 'combine': {
       const out: string[] = [...a.onsets.map(letterSay), ...a.vowels.map(letterSay)];
       for (const o of a.onsets)

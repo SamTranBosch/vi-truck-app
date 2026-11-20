@@ -118,6 +118,29 @@ Lessons 1–2 use the pattern from the lesson map. From lesson 4 on the book shi
 2. Tập đọc: short text "Bể cá" (4 lines, with a picture of an aquarium).
 3. Match word to picture: **bí, lê, hổ, gà, đĩa**.
 
+## Checked at higher resolution (2026-11-20)
+
+Pages 7, 13, 17, 19, 23, 25 (80 dpi) and the story pages 20 and 30 were re-read. Results:
+
+- Sound c (p. 7): flag (cờ), goose or duck (vịt, wrong answer), owl (cú), crane (cò), goat (dê, wrong), fish (cá). The (?) on vịt is resolved.
+- Sound ô (p. 13) and sound d (p. 17): same sets as listed above.
+- Sound e (p. 19): cicada (ve), tamarind (me), bicycle (xe), sparrow (sẻ), pineapple (dứa, wrong), bamboo (tre).
+- Tập đọc p. 17: **cờ** (flag), cá cờ, da cá, cổ cò. p. 19: đa (banyan tree), đò (boat), đố (girl asking), đổ (fallen stool), dẻ (chestnuts). p. 23: la (donkey), lá, lồ ô (bamboo), le le (duck), dế, dê, đê (dike road), lọ, lê la (crawling child).
+- Tone ngã (p. 25): vẽ (child painting), đũa, quạ (crow, wrong), sữa, võ, nhãn (longan). The reading text "Ở bờ đê" has three short sentences about a goat, a cricket and a calf.
+- **Bài 8 "Chồn con đi học" (p. 20)** and **Bài 14 "Hai chú gà con" (p. 30)** are the stories; their six picture questions give the plot (see below). My first version of the app used two stories of my own invention at these places. That was wrong and has been replaced.
+
+## How the app uses the book (since 2026-11-20)
+
+| Book part | In the app |
+|---|---|
+| Làm quen, Đánh vần, sound/tone hunts, Tìm chữ, Tập viết | Meet, Spell, Hunt, FindLetter, Trace (same order and letters as the book; picture sets are our own choices) |
+| **Tập đọc** | New **Read** step in lessons 5, 6, 7, 9, 10, 11, 12, 13, 15. Word lists are the book's printed words (cờ, cá cờ, da cá, cổ cò · đa đò đố đổ dẻ · cờ đỏ, cố đô, đồ cổ, đa · la, lá, lồ ô, le le, dế, dê, đê, lọ, lê la). The short texts (lessons 11, 12, 13, 15) are **our own sentences** using only letters taught so far; a test enforces that. |
+| Kể chuyện | Bài 3 Hai con dê, Bài 8 Chồn con đi học, Bài 14 Hai chú gà con: our own wording following the book's picture questions (6 scenes for 8 and 14). |
+| Ôn tập | Combine grid (Bài 9, 15) plus a reading step |
+| Mở đầu | Picture vocabulary only (sách, cặp, bút, thước, cô giáo, lớp học) |
+
+The plot for the two new stories is inferred from the picture questions. The teacher's exact telling is not printed in the book, so the details (for example what the mouse says) are ours; compare with the teacher's guide if you want it closer.
+
 ## What World 1 teaches (summary for the app)
 
 - **Letters/sounds, in order:** a, c, o, ô, cỏ-cọ words, ơ, d, đ, e, ê, l, b, g, h, i, ia (printed names to confirm).

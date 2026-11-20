@@ -69,7 +69,7 @@ export function Story({ activity, onDone }: ActivityProps<'story'>) {
   return (
     <div className="act act-story-order">
       <div className="prompt">
-        <span className="num-chips" aria-hidden="true"><i>1</i><i>2</i><i>3</i><i>4</i></span>
+        <span className="num-chips" aria-hidden="true">{scenes.map((_, n) => <i key={n}>{n + 1}</i>)}</span>
         <SpeakButton text={PHRASES.storyOrder} label="Nghe câu hỏi" />
       </div>
       <div className="grid-2" role="group" aria-label="Sắp xếp câu chuyện">

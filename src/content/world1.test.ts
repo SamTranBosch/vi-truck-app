@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { audioKey } from '../lib/audio';
 import { hasSound, hasTone, parseSyllable, spellTokens, syllablesOf, type Tone } from '../lib/vietnamese';
-import { collectSpeech } from './speech';
+import { collectSpeech, readWords } from './speech';
 import { PICS } from './pictures';
 import type { Activity } from './types';
 import { WORLD1 } from './world1';
@@ -164,14 +164,47 @@ describe('combine grids (ôn tập)', () => {
 });
 
 describe('stories', () => {
-  it('each story has 4 scenes with a picture and a sentence', () => {
+  it('each story has 4–6 scenes with a picture and a sentence; the two longer ones follow the book (6 pictures)', () => {
     acts('story').forEach(({ a }) => {
-      expect(a.story.scenes).toHaveLength(4);
+      expect(a.story.scenes.length).toBeGreaterThanOrEqual(4);
+      expect(a.story.scenes.length).toBeLessThanOrEqual(6);
       a.story.scenes.forEach((s) => {
         expect(s.emoji.length).toBeGreaterThan(0);
         expect(s.text.length).toBeGreaterThan(5);
       });
     });
+  });
+});
+
+describe('Tập đọc (reading lines)', () => {
+  const reads = acts('read');
+
+  it('there is a reading step in lessons 5, 6, 7, 9, 10, 11, 12, 13 and 15', () => {
+    expect(reads.map((r) => r.lesson.id)).toEqual(['bai-5', 'bai-6', 'bai-7', 'bai-9', 'bai-10', 'bai-11', 'bai-12', 'bai-13', 'bai-15']);
+  });
+
+  it('every word in a reading line is decodable with the letters and tones taught so far', () => {
+    reads.forEach(({ index, a, lesson }) => {
+      const { letters, tones } = learnedAfter(index);
+      a.lines.forEach((line) =>
+        readWords(line).forEach((w) => expect(isDecodable(w, letters, tones), `${lesson.id}: "${w}" in "${line}"`).toBe(true)),
+      );
+    });
+  });
+
+  it('lines stay short enough for a 5-year-old (at most 6 words) and each lesson has 3–9 lines', () => {
+    reads.forEach(({ a }) => {
+      expect(a.lines.length).toBeGreaterThanOrEqual(3);
+      expect(a.lines.length).toBeLessThanOrEqual(9);
+      a.lines.forEach((l) => expect(readWords(l).length).toBeLessThanOrEqual(6));
+    });
+  });
+
+  it('the voice list has the whole line and every word of it', () => {
+    const texts = collectSpeech(WORLD1);
+    expect(texts).toContain('Bé Hà ở bờ hồ');
+    expect(texts).toContain('hồ');
+    expect(texts).toContain('Em đọc to nhé!');
   });
 });
 

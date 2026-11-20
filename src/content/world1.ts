@@ -17,25 +17,31 @@ const storyTwoGoats: Story = {
   ],
 };
 
-const storyChickSchool: Story = {
-  id: 'ga-con-di-hoc',
-  title: 'Gà con đi học',
+/** Bài 8 of the book. The plot follows the six picture questions; the wording is ours. */
+const storyFoxSchool: Story = {
+  id: 'chon-con-di-hoc',
+  title: 'Chồn con đi học',
   scenes: [
-    { emoji: '🐣', text: 'Gà con muốn đi học.' },
-    { emoji: '🎒🐥', text: 'Gà con đeo cặp đến lớp.' },
-    { emoji: '👩‍🏫📖', text: 'Cô giáo dạy gà con đọc chữ.' },
-    { emoji: '🌟🐥', text: 'Gà con đọc được chữ đầu tiên. Gà con rất vui.' },
+    { emoji: '🦊⚽', text: 'Chồn con mải đá bóng nên không đến trường.' },
+    { emoji: '🦊😢', text: 'Các bạn đều đi học, không ai chơi với chồn con.' },
+    { emoji: '🦊🦋', text: 'Chồn con mải đuổi theo bướm nên bị lạc trong rừng.' },
+    { emoji: '🦊❓', text: 'Chồn con chưa biết đọc chữ nên không hiểu biển chỉ đường.' },
+    { emoji: '🦁🦊', text: 'Bác sư tử đưa chồn con về nhà.' },
+    { emoji: '🦊🎒', text: 'Từ hôm đó, chồn con chăm chỉ đi học.' },
   ],
 };
 
-const storyHareTortoise: Story = {
-  id: 'tho-va-rua',
-  title: 'Thỏ và rùa',
+/** Bài 14 of the book. The plot follows the six picture questions; the wording is ours. */
+const storyTwoChicks: Story = {
+  id: 'hai-chu-ga-con',
+  title: 'Hai chú gà con',
   scenes: [
-    { emoji: '🐰🐢', text: 'Thỏ và rùa thi chạy.' },
-    { emoji: '🐰💨', text: 'Thỏ chạy rất nhanh, rùa đi chậm rãi.' },
-    { emoji: '🐰💤', text: 'Thỏ nằm ngủ dưới gốc cây.' },
-    { emoji: '🐢🏁', text: 'Rùa đi mãi không nghỉ và về đích trước.' },
+    { emoji: '🐥🐛', text: 'Hai anh em gà con ra vườn kiếm ăn. Chúng thấy một con mồi.' },
+    { emoji: '🐥🐥', text: 'Đói bụng quá, hai chú gà cùng giành con mồi.' },
+    { emoji: '💢🐥', text: 'Hai anh em cãi nhau ầm ĩ.' },
+    { emoji: '🐛🐥', text: 'Con mồi lại bò ra. Hai chú gà lại lao vào giành.' },
+    { emoji: '🐭🐥', text: 'Chuột chạy đến nói: Anh em phải biết nhường nhau chứ!' },
+    { emoji: '😔🐥', text: 'Hai chú gà con ân hận và xấu hổ.' },
   ],
 };
 
@@ -108,6 +114,7 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'tone', tone: 'hoi', words: ['hổ', 'thỏ', 'cỏ', 'rổ', 'bò', 'cá'] },
       { type: 'hunt', kind: 'tone', tone: 'nang', words: ['cọ', 'vịt', 'ngựa', 'chuột', 'vẹt', 'chuối'] },
       { type: 'pick', mode: 'read', words: ['cỏ', 'cọ', 'cô', 'cá'] },
+      { type: 'read', lines: ['cò', 'ô', 'cổ'] },
       { type: 'trace', items: ['cỏ', 'cọ'] },
     ],
   },
@@ -124,6 +131,7 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'sound', target: { onset: 'd' }, words: ['dê', 'dế', 'dâu', 'dừa', 'khỉ', 'táo'] },
       { type: 'findLetter', targets: ['ơ', 'd'], others: ['a', 'c', 'o', 'ô', 's', 'x', 'v', 'n', 'r', 'k'] },
       { type: 'pick', mode: 'read', words: ['cờ', 'cà', 'cá', 'cỏ'] },
+      { type: 'read', lines: ['cờ', 'cá cờ', 'da cá', 'cổ cò'] },
       { type: 'trace', items: ['ơ', 'd', 'da'] },
     ],
   },
@@ -140,10 +148,11 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'sound', target: { vowel: 'e' }, words: ['xe', 'sẻ', 'ghe', 'bé', 'dứa', 'cá'] },
       { type: 'findLetter', targets: ['đ', 'e'], others: ['d', 'a', 'o', 's', 'x', 'v', 'n', 'r', 'k', 'c'] },
       { type: 'pick', mode: 'read', words: ['đá', 'cờ', 'cô', 'cá'] },
+      { type: 'read', lines: ['đa', 'đò', 'đố', 'đổ', 'dẻ'] },
       { type: 'trace', items: ['đ', 'e', 'đe', '0', '1'] },
     ],
   },
-  { id: 'bai-8', kind: 'story', title: 'Bài 8: Gà con đi học', label: '📖', teaches: {}, activities: [{ type: 'story', story: storyChickSchool }] },
+  { id: 'bai-8', kind: 'story', title: 'Bài 8: Chồn con đi học', label: '📖', teaches: {}, activities: [{ type: 'story', story: storyFoxSchool }] },
   {
     id: 'bai-9',
     kind: 'review',
@@ -152,6 +161,7 @@ export const WORLD1: Lesson[] = [
     teaches: {},
     activities: [
       { type: 'combine', onsets: ['c', 'd', 'đ'], vowels: ['a', 'o', 'ô', 'ơ', 'e'], blocked: ['ce'], need: 6 },
+      { type: 'read', lines: ['cờ đỏ', 'cố đô', 'đồ cổ', 'đa'] },
       { type: 'pick', mode: 'read', words: ['đá', 'cọ', 'cờ', 'cỏ'] },
     ],
   },
@@ -168,6 +178,7 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'sound', target: { onset: 'l' }, words: ['lửa', 'lúa', 'lá', 'lê', 'gà', 'thỏ'] },
       { type: 'findLetter', targets: ['ê', 'l'], others: ['e', 'a', 'o', 's', 'x', 'v', 'n', 'r', 'k', 'c'] },
       { type: 'pick', mode: 'read', words: ['lê', 'lá', 'lọ', 'đá'] },
+      { type: 'read', lines: ['la', 'lá', 'lồ ô', 'le le', 'dế', 'dê', 'đê', 'lọ', 'lê la'] },
       { type: 'trace', items: ['ê', 'l', 'lê'] },
     ],
   },
@@ -183,6 +194,7 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'sound', target: { onset: 'b' }, words: ['bò', 'bóng', 'bánh', 'bí', 'lá', 'gà'] },
       { type: 'hunt', kind: 'tone', tone: 'nga', words: ['vẽ', 'đũa', 'sữa', 'võ', 'cá', 'gà'] },
       { type: 'pick', mode: 'read', words: ['bò', 'bê', 'cọ', 'lê'] },
+      { type: 'read', lines: ['Bê la cà ở bờ đê.', 'Dê ở bờ đê.', 'Có dế, có dê, có bê.'] },
       { type: 'trace', items: ['b', 'bê', 'bễ', '2', '3'] },
     ],
   },
@@ -199,6 +211,7 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'sound', target: { onset: 'h' }, words: ['hổ', 'hoa', 'hành', 'hồ', 'gấu', 'cá'] },
       { type: 'findLetter', targets: ['g', 'h'], others: ['a', 'c', 'o', 'ô', 's', 'x', 'v', 'n', 'r', 'k'] },
       { type: 'pick', mode: 'read', words: ['gà', 'hồ', 'hổ', 'ga'] },
+      { type: 'read', lines: ['Bé Hà ở bờ hồ.', 'Bé Lê có gà.', 'Bé Hà có cá.'] },
       { type: 'trace', items: ['g', 'ga', 'h', 'hồ'] },
     ],
   },
@@ -215,10 +228,11 @@ export const WORLD1: Lesson[] = [
       { type: 'hunt', kind: 'sound', target: { vowel: 'ia' }, words: ['đĩa', 'bìa', 'chìa', 'bí', 'khỉ', 'hổ'] },
       { type: 'findLetter', targets: ['i'], others: ['a', 'c', 'o', 'ô', 's', 'x', 'v', 'n', 'r', 'k', 'l'] },
       { type: 'pick', mode: 'read', words: ['bí', 'đĩa', 'bìa', 'gà'] },
+      { type: 'read', lines: ['Bé Bi có bi.', 'Bé Li có đĩa bí.', 'Bi, Li ở bờ hồ.'] },
       { type: 'trace', items: ['i', 'bìa', '4', '5'] },
     ],
   },
-  { id: 'bai-14', kind: 'story', title: 'Bài 14: Thỏ và rùa', label: '📖', teaches: {}, activities: [{ type: 'story', story: storyHareTortoise }] },
+  { id: 'bai-14', kind: 'story', title: 'Bài 14: Hai chú gà con', label: '📖', teaches: {}, activities: [{ type: 'story', story: storyTwoChicks }] },
   {
     id: 'bai-15',
     kind: 'review',
@@ -227,6 +241,7 @@ export const WORLD1: Lesson[] = [
     teaches: {},
     activities: [
       { type: 'combine', onsets: ['l', 'b', 'h', 'g'], vowels: ['a', 'o', 'ô', 'ơ', 'e', 'ê', 'i', 'ia'], blocked: ['ge', 'gê', 'gi', 'gia'], need: 8 },
+      { type: 'read', lines: ['Bể có cá cờ.', 'Bé có bể cá.', 'Cá cờ ở bể.'] },
       { type: 'pick', mode: 'read', words: ['bí', 'lê', 'hổ', 'gà', 'đĩa'] },
     ],
   },
