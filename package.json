@@ -9,7 +9,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "audio:list": "tsx scripts/list-audio.ts",
-    "audio:gen": "tsx scripts/gen-audio-zalo.ts"
+    "audio:gen": "tsx scripts/gen-audio.ts"
   },
   "keywords": [],
   "author": "",

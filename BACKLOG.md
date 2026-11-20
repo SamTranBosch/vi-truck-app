@@ -87,3 +87,13 @@ NOT verified (needs a machine/repo this session did not have):
 - [ ] Custom domain / TLS for the Docker image (put it behind Caddy/Traefik/Cloudflare Tunnel; iPhone PWA requires HTTPS).
 - [ ] Zalo key stays local (never in repo/CI). Generated mp3s are committed to the repo (≈200 small files).
 - [ ] Optional later: Dependabot, `npm audit` step, Playwright e2e in CI (the autoplayer script used in development lives only in /tmp; port it into `e2e/`), Lighthouse PWA check.
+
+## Voice (user feedback 2026-11-20: "not the Vietnamese Southern woman")
+Cause: no clips were baked in, so the app used the device's built-in vi-VN voice (northern).
+Done: `scripts/gen-audio.ts` + `scripts/lib/tts.ts` support FPT.AI (lannhi / linhsan, Southern female) and Zalo (speaker 1); `audio.yml` workflow makes listening samples and generates + commits all 199 clips using repository secrets.
+Open:
+- [ ] User adds `FPT_API_KEY` (or `ZALO_API_KEY`) secret, runs "Teacher voice" in samples mode, picks the voice, runs mode all.
+- [ ] Neither API has been called from this code (no key in the build environment). Expect small fixes on first live run.
+- [ ] Letter names/tone names by TTS may sound wrong ("a", "cờ", "huyền"): have a native speaker review; replace with real recordings (see BACKLOG "real voice").
+- [ ] Mixed voice problem: while only some clips exist, the app mixes teacher clips and the device voice. Generate all clips in one run.
+- [ ] Licensing: check the provider's terms for redistributing the generated audio inside a published app (free tier terms may limit commercial use).

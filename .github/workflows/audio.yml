@@ -1,0 +1,73 @@
+name: Teacher voice
+
+# Manual workflow. Needs a repository secret (Settings -> Secrets and variables -> Actions):
+#   FPT_API_KEY  (FPT.AI, voices lannhi / linhsan = Southern female)   or   ZALO_API_KEY  (Zalo, voice 1 = South female)
+# Step 1: run with mode "samples", download the artifact "voice-samples", listen, pick a voice.
+# Step 2: run with mode "all" and the chosen voice: it commits public/audio/*.mp3 and redeploys.
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: TTS provider
+        type: choice
+        options: [fpt, zalo]
+        default: fpt
+      voice:
+        description: 'Voice id (fpt: lannhi or linhsan, zalo: 1). For samples you may list several: lannhi,linhsan'
+        type: string
+        default: lannhi
+      mode:
+        description: samples = a few clips to listen to; all = generate every clip and publish
+        type: choice
+        options: [samples, all]
+        default: samples
+      force:
+        description: Regenerate clips that already exist (mode all)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    env:
+      FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
+      ZALO_API_KEY: ${{ secrets.ZALO_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Samples
+        if: inputs.mode == 'samples'
+        run: npm run audio:gen -- --samples --provider "${{ inputs.provider }}" --voices "${{ inputs.voice }}" --out voice-samples
+      - uses: actions/upload-artifact@v4
+        if: inputs.mode == 'samples'
+        with:
+          name: voice-samples
+          path: voice-samples
+
+      - name: Generate all clips
+        if: inputs.mode == 'all'
+        run: |
+          FORCE=""; if [ "${{ inputs.force }}" = "true" ]; then FORCE="--force"; fi
+          npm run audio:gen -- --provider "${{ inputs.provider }}" --voice "${{ inputs.voice }}" $FORCE
+      - name: Commit clips and redeploy
+        if: inputs.mode == 'all'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/audio
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "Add teacher voice clips (${{ inputs.provider }}/${{ inputs.voice }})"
+          git push
+          # pushes made with the workflow token do not trigger other workflows, so start them explicitly
+          gh workflow run pages.yml
+          gh workflow run docker.yml

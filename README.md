@@ -24,17 +24,32 @@ Progress is stored on the device. Parent area: **hold the ⚙️ button 2 second
 as a file (move a child to a new device), reset.
 
 ## Teacher voice (Southern female)
-Until clips exist the app falls back to the device's Vietnamese voice (quality varies, often no Southern accent).
-To ship real clips:
+Until clips exist the app uses the phone's built-in Vietnamese voice (northern, robotic). The real teacher voice is
+**baked in**: mp3 files in `public/audio/` that the service worker caches for offline use.
+
+Providers with Southern female voices (both have free tiers; the app needs only ~3,000 characters):
+| Provider | Voice ids | Key variable |
+|---|---|---|
+| FPT.AI (docs.fpt.ai, v5) | `lannhi`, `linhsan` | `FPT_API_KEY` (console.fpt.ai -> create project -> enable Text to Speech) |
+| Zalo AI | `1` (South female) | `ZALO_API_KEY` (developers.zalo.ai) |
+
+**Easiest: GitHub Actions (key stays a secret, never in chat or code)**
+1. Repo Settings -> Secrets and variables -> Actions -> New repository secret: `FPT_API_KEY` (and/or `ZALO_API_KEY`).
+2. Actions tab -> **Teacher voice** -> Run workflow -> mode `samples`, voice `lannhi,linhsan` -> download the
+   `voice-samples` artifact and **listen on the phone speaker**. Repeat with provider `zalo`, voice `1` to compare.
+3. Run again with mode `all` and the chosen voice. It commits `public/audio/*.mp3` + `manifest.json` and starts the Pages and
+   Docker workflows. Reload the app twice on the phone (the first reload installs the new service worker).
+
+**Or locally:**
 ```bash
-npm run audio:list                       # all 199 texts and their file keys
-ZALO_API_KEY=... npm run audio:gen -- --dry   # preview
-ZALO_API_KEY=... npm run audio:gen             # writes public/audio/*.mp3 + manifest.json, then rebuild
+FPT_API_KEY=... npm run audio:gen -- --samples --provider fpt --voices lannhi,linhsan   # -> voice-samples/
+FPT_API_KEY=... npm run audio:gen -- --provider fpt --voice lannhi                        # all clips -> public/audio
+npm run audio:gen -- --dry                                                                # list only
 ```
-`audio:gen` uses Zalo TTS speaker 1 (South, female) at speed 0.8. **It has not been run against the live API**
-(no key in the build environment); the request code is isolated in `synthesize()` if Zalo's format differs.
-Listen to a few clips first (`--only "cá,cà" --speaker 1`) before generating everything. Letter names and tones
-(cờ, a, ca, huyền…) are best recorded by a real teacher later — drop `<key>.mp3` into `public/audio/` and rerun the manifest step.
+The request code (`scripts/lib/tts.ts`) follows the providers' docs and is covered by mocked tests; it has **not** been run
+against the live APIs yet. Single letter sounds and tones ("cờ", "a", "huyền") are where TTS is weakest: have a native speaker
+listen to those first. A real recording by a teacher can replace any clip: drop `<key>.mp3` (key from `npm run audio:list`)
+into `public/audio/` and add it to `manifest.json`.
 
 ## Architecture
 ```
@@ -79,8 +94,7 @@ long immutable caching on hashed `assets/`.
 Releasing a new version: commit to `main` (Pages + `:latest` update automatically) or tag `git tag v0.1.0 && git push --tags`
 for a versioned image. Phones pick up the update the next time the app is opened online (service worker `autoUpdate`).
 
-Adding the teacher voice to a deployed build: run `npm run audio:gen` **on your own machine** (the Zalo key must never be
-committed or put in CI), commit the generated `public/audio/*.mp3` + `manifest.json`, push.
+Adding the teacher voice to a deployed build: see "Teacher voice" above (workflow `audio.yml`, key kept as a repository secret).
 
 ## Code map
 - `src/lib/vietnamese.ts` — syllable parser; answers for "which word has sound X / tone Y" are computed, not typed.
