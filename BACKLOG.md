@@ -80,9 +80,9 @@ Next: bake-off Zalo voices → generate clips; try on a real iPhone; tune tracin
 Covered by files in the repo: `Dockerfile`, `nginx.conf`, `.dockerignore`, `.gitignore`, `.github/workflows/{ci,pages,docker}.yml`, README sections "Architecture" and "GitHub: CI, Pages, Docker".
 Verified: workflow YAML parses; a clean `npm ci && npm run build` from the lockfile (the Dockerfile's build stage steps) succeeds; built file names match the nginx cache rules.
 NOT verified (needs a machine/repo this session did not have):
-- [ ] `docker build` / `docker run` — no Docker daemon in the build sandbox. First thing to run locally: `docker build -t xe-hoc-chu . && docker run --rm -p 8080:8080 xe-hoc-chu`, then open /healthz.
-- [ ] The three GitHub Actions workflows have never run; expect to fix small things on the first run (Pages needs Settings → Pages → Source = GitHub Actions; action versions may need bumps).
-- [ ] Repo creation: the session could not create `SamTranBosch/vi-truck-app` (no GitHub connector with repo-create, `gh` token invalid). Create it empty, then push.
+- [x] `docker build` — verified by GitHub Actions (docker.yml run #1 succeeded and pushed the image to ghcr.io). Still to try locally (`docker run` + /healthz): `docker build -t xe-hoc-chu . && docker run --rm -p 8080:8080 xe-hoc-chu`, then open /healthz.
+- [x] First run (2026-11-20): CI ✅, Docker image ✅, Pages ❌ at the deploy step. Cause is almost certainly that Pages is not enabled yet → Settings → Pages → Source = GitHub Actions, then re-run the failed job (Actions tab → Deploy to GitHub Pages → Re-run). Logs were not readable from the build sandbox, so confirm in the run log.
+- [x] Repo `SamTranBosch/vi-truck-app` created by the user; first push needed the Claude GitHub App to be granted access to the new repo.
 - [ ] GHCR package visibility (private by default) and Pages on a private repo (paid plan only).
 - [ ] Custom domain / TLS for the Docker image (put it behind Caddy/Traefik/Cloudflare Tunnel; iPhone PWA requires HTTPS).
 - [ ] Zalo key stays local (never in repo/CI). Generated mp3s are committed to the repo (≈200 small files).
