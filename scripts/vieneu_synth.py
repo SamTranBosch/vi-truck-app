@@ -54,7 +54,8 @@ for i, job in enumerate(jobs, 1):
             )
         if os.path.getsize(out) < 800:
             raise RuntimeError("clip is empty")
-        print(f"[{i}/{len(jobs)}] {args.voice}: {text} ({time.time() - started:.1f}s)", flush=True)
+        final = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out], capture_output=True, text=True).stdout or 0)
+        print(f"[{i}/{len(jobs)}] {args.voice}: {text} (model {len(audio) / tts.sample_rate:.2f}s -> clip {final:.2f}s, took {time.time() - started:.1f}s)", flush=True)
     except Exception as e:  # keep going: one bad clip must not lose the rest
         failed += 1
         print(f"[{i}/{len(jobs)}] FAILED \"{text}\": {e}", file=sys.stderr, flush=True)
