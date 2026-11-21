@@ -229,10 +229,70 @@ export function TankArt() {
   );
 }
 
+/** Dump truck (xe ben) tipping gravel at a quarry. */
+export function DumpArt() {
+  return (
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <rect x={0} y={0} width={360} height={340} fill="url(#sky)" />
+      <circle cx={52} cy={50} r={24} fill={SUN} stroke={INK} strokeWidth={3} />
+      <Cloud x={150} y={44} />
+      <Cloud x={262} y={96} s={0.8} />
+
+      {/* hills and rock pile */}
+      <path d="M0 250 Q70 170 150 240 T300 220 L360 250 V340 H0 Z" fill="#B9A98E" stroke={INK} strokeWidth={3} />
+      <path d="M200 340 L250 276 L290 304 L330 262 L360 300 V340 Z" fill="#8F8573" stroke={INK} strokeWidth={3} />
+      <g fill="#A89C86" stroke={INK} strokeWidth={2}>
+        <circle cx={270} cy={320} r={9} />
+        <circle cx={300} cy={326} r={7} />
+        <circle cx={326} cy={318} r={10} />
+      </g>
+
+      <Road lane="#fff" />
+
+      {/* chassis */}
+      <rect x={96} y={318} width={214} height={20} rx={5} fill="#5B6478" stroke={INK} strokeWidth={3} />
+      {/* tipping body, raised at the front */}
+      <g transform="rotate(-14 110 316)">
+        <path d="M100 312 V236 H224 L236 312 Z" fill="#2F7DD1" stroke={INK} strokeWidth={3} />
+        <path d="M112 252 H226 M112 276 H230 M112 298 H234" stroke="#fff" strokeWidth={5} opacity={0.5} />
+        <path d="M96 236 H232" stroke={INK} strokeWidth={6} />
+        <g fill="#8F8573" stroke={INK} strokeWidth={2}>
+          <circle cx={132} cy={230} r={11} />
+          <circle cx={160} cy={226} r={13} />
+          <circle cx={190} cy={230} r={10} />
+        </g>
+      </g>
+      {/* ram */}
+      <path d="M216 318 L236 270" stroke={INK} strokeWidth={9} />
+      <path d="M216 318 L236 270" stroke="#DADDE6" strokeWidth={4} />
+      {/* falling gravel */}
+      <g fill="#A89C86" stroke={INK} strokeWidth={2}>
+        <circle cx={92} cy={296} r={6} />
+        <circle cx={80} cy={314} r={7} />
+        <circle cx={96} cy={322} r={5} />
+      </g>
+
+      {/* cab */}
+      <rect x={236} y={270} width={74} height={70} rx={12} fill="#F2B632" stroke={INK} strokeWidth={3} />
+      <path d="M268 278 H296 Q302 278 303 285 L305 308 H268 Z" fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <rect x={244} y={280} width={20} height={28} rx={4} fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <rect x={298} y={332} width={14} height={12} rx={3} fill="#A8B0C0" stroke={INK} strokeWidth={2.5} />
+      <circle cx={303} cy={320} r={6} fill="#FFE59A" stroke={INK} strokeWidth={2.5} />
+      <Wheel cx={136} />
+      <Wheel cx={190} />
+      <Wheel cx={276} />
+
+      <SvgPic emoji="🚧" x={30} y={404} size={44} />
+      <SvgPic emoji="🪨" x={280} y={398} size={46} />
+    </g>
+  );
+}
+
 const ART: Partial<Record<TruckKind, () => ReactElement>> = {
   cement: CementArt,
   container: ContainerArt,
   tank: TankArt,
+  dump: DumpArt,
 };
 
 export function TruckArtFor({ kind }: { kind: TruckKind }) {

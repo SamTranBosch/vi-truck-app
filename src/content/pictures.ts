@@ -79,6 +79,27 @@ export const PICS: Record<string, string> = {
   'khen': '👍', 'rèn': '⚒️', 'quét': '🧹', 'hét': '📢',
   'mẹt': '🧺', 'tên lửa': '🚀', 'tết': '🧧', 'nến': '🕯️',
   'bến xe': '🚌', 'sên': '🐌', 'tết nơ': '🎀', 'rết': '🐛',
+  // world 5 (dump truck)
+  'đèn pin': '🔦', 'quả mít': '🍈', 'nhìn': '👀', 'tin': '📰',
+  'nín': '🤫', 'chín': '🍎', 'thịt': '🥩', 'cô tiên': '🧚',
+  'Việt Nam': '🇻🇳', 'biển': '🌊', 'kiến': '🐜', 'đèn điện': '💡',
+  'biệt thự': '🏠', 'viết': '✍️', 'yên ngựa': '🐎', 'Nam Yết': '🏝️',
+  'yên xe': '🚲', 'chim yến': '🐦', 'niêm yết': '📋', 'yết kiến': '🤝',
+  'mẹ con': '👩‍👧', 'chim hót': '🐦', 'nón lá': '👒', 'ném còn': '🎯',
+  'quả nhót': '🍅', 'rót trà': '🍵', 'sọt cá': '🧺', 'thôn xóm': '🏘️',
+  'cột cờ': '🚩', 'đôn': '🪑', 'chồn': '🦦', 'trốn tìm': '🙈',
+  'cà rốt': '🥕', 'lá lốt': '🍃', 'thốt nốt': '🌴', 'sơn ca': '🐦',
+  'vợt': '🏸', 'lợn': '🐖', 'sơn nhà': '🖌️', 'cơn mưa': '🌧️',
+  'thớt': '🪵', 'ớt': '🌶️', 'phun': '⛲', 'mứt': '🍬',
+  'chú lùn': '🧙', 'cún con': '🐶', 'chim cút': '🐦', 'râm bụt': '🌺',
+  'nứt nẻ': '🏜️', 'ấm sứt': '🫖', 'chuồn chuồn': '🪰', 'cá chuồn': '🐟',
+  'cuộn chỉ': '🧵', 'buồn bã': '😢', 'vuốt nhọn': '🦅', 'tuốt lúa': '🌾',
+  'con lươn': '🐍', 'lướt ván': '🏄', 'vượn': '🦧', 'vườn': '🌳',
+  'trượt': '⛸️', 'vượt': '🏃', 'thang': '🪜', 'vạc': '🦆',
+  'cá vàng': '🐠', 'dưa gang': '🍈', 'chở hàng': '🚢', 'bác sĩ': '🧑‍⚕️',
+  'con hạc': '🦩', 'bản nhạc': '🎼', 'măng': '🎍', 'tắc kè': '🦎',
+  'răng': '🦷', 'găng': '🧤', 'tia nắng': '☀️', 'xắc': '👜',
+  'quả lắc': '🕰️',
 };
 
 export function pic(word: string): string | undefined {
