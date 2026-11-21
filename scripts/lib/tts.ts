@@ -88,6 +88,12 @@ export async function synthesize(text: string, opt: SynthOptions): Promise<Buffe
       headers: { apikey: opt.apiKey, 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ input: text, speaker_id: voice, speed, encode_type: '1' }),
     });
+    if (res.status === 429) {
+      // too many requests: wait longer each time (5 s, 10 s, ...) before giving up on this clip
+      if (attempt === 3) throw new Error('Zalo HTTP 429');
+      await poll.sleepFn(5000 * (attempt + 1));
+      continue;
+    }
     if (!res.ok) throw new Error(`Zalo HTTP ${res.status}`);
     json = (await res.json()) as typeof json;
     if (json.error_code !== 155) break;

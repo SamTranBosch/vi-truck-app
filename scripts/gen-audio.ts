@@ -80,17 +80,27 @@ async function all() {
     return;
   }
   const apiKey = requireKey();
-  let failed = 0;
-  for (const [i, c] of todo.entries()) {
-    try {
-      await writeFile(join(OUT, `${c.key}.mp3`), await synthesize(c.text, { provider, apiKey, voice, speed }));
-      console.log(`[${i + 1}/${todo.length}] ${c.text}`);
-    } catch (e) {
-      failed++;
-      console.error(`[${i + 1}/${todo.length}] FAILED "${c.text}": ${(e as Error).message}`);
+  let queue = todo;
+  // a rate limit usually clears after a pause: retry what failed up to 3 more times, a minute apart
+  for (let round = 0; round < 4 && queue.length; round++) {
+    if (round > 0) {
+      console.log(`Waiting 60 s, then retrying ${queue.length} clip(s) (round ${round + 1})`);
+      await sleep(60000);
     }
-    await sleep(1000); // free tiers queue requests: stay slow and polite
+    const failedNow: typeof todo = [];
+    for (const [i, c] of queue.entries()) {
+      try {
+        await writeFile(join(OUT, `${c.key}.mp3`), await synthesize(c.text, { provider, apiKey, voice, speed }));
+        console.log(`[${i + 1}/${queue.length}] ${c.text}`);
+      } catch (e) {
+        failedNow.push(c);
+        console.error(`[${i + 1}/${queue.length}] FAILED "${c.text}": ${(e as Error).message}`);
+      }
+      await sleep(1000); // free tiers queue requests: stay slow and polite
+    }
+    queue = failedNow;
   }
+  const failed = queue.length;
   const n = await writeManifest();
   console.log(`manifest.json lists ${n} clips${failed ? `; ${failed} failed, rerun to retry` : ''}`);
   if (failed) process.exit(2);

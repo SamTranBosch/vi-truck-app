@@ -60,7 +60,8 @@ jobs:
           FORCE=""; if [ "${{ inputs.force }}" = "true" ]; then FORCE="--force"; fi
           npm run audio:gen -- --provider "${{ inputs.provider }}" --voice "${{ inputs.voice }}" $FORCE
       - name: Commit clips and redeploy
-        if: inputs.mode == 'all'
+        # also after a partial run (rate limit): keep the clips that worked, run again later for the rest
+        if: ${{ !cancelled() && inputs.mode == 'all' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
