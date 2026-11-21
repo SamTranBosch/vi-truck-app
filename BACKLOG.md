@@ -120,3 +120,6 @@ Not done / ideas
 ## UX pass (2026-11-20, evening)
 Done: tablet layout (play button no longer clipped on iPad; lessons scaled up with `zoom` at >= 700 px), idle nudge (`useIdleHint`: after 9 s a right answer wiggles in Hunt and Pick), image sizes confirmed (truck 156 KB, celebration 53 KB, mascot 48 KB).
 Ideas not done: first-run welcome screen with the mascot; "Add to Home Screen" hint for iPhone Safari in the parent area; nudge in FindLetter/Trace; per-lesson resume after leaving mid-lesson; parent progress overview (which letters are still shaky); a landscape-specific map layout for iPad.
+
+## Zalo wrapper review (2026-11-21)
+`iconclub/zalo-tts` is a small Python client (needs Python 3.7-3.8 and PyAudio, no licence stated) for the same official endpoint our script already calls (`POST https://api.zalo.ai/v1/tts/synthesize`, header `apikey`, form `input`, `speed` 0.8-1.2, `speaker_id` 1 South women, 2 North women, 3 South men, 4 North men). We keep our own Node script (no extra dependency, no code copied). Changes: voice ids aligned with the wrapper, retry on error 155. Not verified: whether Zalo still hands out free keys / what the terms say; check when creating the key.

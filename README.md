@@ -31,7 +31,7 @@ Providers with Southern female voices (both have free tiers; the app needs only 
 | Provider | Voice ids | Key variable |
 |---|---|---|
 | FPT.AI (docs.fpt.ai, v5) | `lannhi`, `linhsan` | `FPT_API_KEY` (console.fpt.ai -> create project -> enable Text to Speech) |
-| Zalo AI | `1` (South female) | `ZALO_API_KEY` (developers.zalo.ai) |
+| Zalo AI | `1` (South female; ids as in the ZaloTTS wrapper: 1/2 women South/North, 3/4 men South/North) | `ZALO_API_KEY` (key page linked from zalo.ai/docs/api/getting-started) |
 
 **Easiest: GitHub Actions (key stays a secret, never in chat or code)**
 1. Repo Settings -> Secrets and variables -> Actions -> New repository secret: `FPT_API_KEY` (and/or `ZALO_API_KEY`).

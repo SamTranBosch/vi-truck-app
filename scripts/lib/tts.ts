@@ -19,8 +19,9 @@ export const VOICES: Record<Provider, VoiceInfo[]> = {
     { id: 'banmai', label: 'Ban Mai, Northern female (for comparison only)' },
   ],
   zalo: [
+    // Ids as in the open-source ZaloTTS wrapper (github.com/iconclub/zalo-tts): 1 and 2 women, 3 and 4 men.
     { id: '1', label: 'South female' },
-    { id: '5', label: 'Southern female 2 (check Zalo docs)' },
+    { id: '3', label: 'South male (for comparison only)' },
     { id: '2', label: 'North female (for comparison only)' },
   ],
 };
@@ -79,13 +80,19 @@ export async function synthesize(text: string, opt: SynthOptions): Promise<Buffe
     return fetchWhenReady(json.async, poll);
   }
 
-  const res = await fetchFn('https://api.zalo.ai/v1/tts/synthesize', {
-    method: 'POST',
-    headers: { apikey: opt.apiKey, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ input: text, speaker_id: voice, speed, encode_type: '1' }),
-  });
-  if (!res.ok) throw new Error(`Zalo HTTP ${res.status}`);
-  const json = (await res.json()) as { error_code?: number; error_message?: string; data?: { url?: string } };
+  // The wrapper treats error 155 as a soft failure; we assume a request-rate limit and retry a few times with a pause.
+  let json: { error_code?: number; error_message?: string; data?: { url?: string } } = {};
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetchFn('https://api.zalo.ai/v1/tts/synthesize', {
+      method: 'POST',
+      headers: { apikey: opt.apiKey, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ input: text, speaker_id: voice, speed, encode_type: '1' }),
+    });
+    if (!res.ok) throw new Error(`Zalo HTTP ${res.status}`);
+    json = (await res.json()) as typeof json;
+    if (json.error_code !== 155) break;
+    await poll.sleepFn(1500 * (attempt + 1));
+  }
   if (json.error_code !== 0 || !json.data?.url) throw new Error(`Zalo error ${json.error_code}: ${json.error_message}`);
   return fetchWhenReady(json.data.url, poll);
 }

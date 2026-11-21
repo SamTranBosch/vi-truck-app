@@ -55,6 +55,33 @@ describe('Zalo provider', () => {
   });
 });
 
+describe('Zalo error 155 (retry)', () => {
+  it('retries a few times, then succeeds', async () => {
+    let calls = 0;
+    const fetchFn = (async (url: string) => {
+      if (url.includes('api.zalo.ai')) {
+        calls++;
+        return calls < 3 ? json({ error_code: 155, error_message: 'busy' }) : json({ error_code: 0, data: { url: 'https://z/x.mp3' } });
+      }
+      return audioRes();
+    }) as unknown as typeof fetch;
+    await synthesize('cá', { provider: 'zalo', apiKey: 'Z', fetchFn, ...noWait });
+    expect(calls).toBe(3);
+  });
+  it('gives up after four tries', async () => {
+    let calls = 0;
+    const fetchFn = (async () => {
+      calls++;
+      return json({ error_code: 155, error_message: 'busy' });
+    }) as unknown as typeof fetch;
+    await expect(synthesize('a', { provider: 'zalo', apiKey: 'Z', fetchFn, ...noWait })).rejects.toThrow(/155/);
+    expect(calls).toBe(4);
+  });
+  it('lists the wrapper speaker ids: 1 South female is the default', () => {
+    expect(VOICES.zalo.map((v) => v.id)).toEqual(['1', '3', '2']);
+  });
+});
+
 describe('voice lists', () => {
   it('the default voices are the Southern female ones', () => {
     expect(VOICES.fpt[0].label).toMatch(/Southern female/);
