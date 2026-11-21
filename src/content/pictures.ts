@@ -60,6 +60,25 @@ export const PICS: Record<string, string> = {
   'diếp cá': '☘️', 'kim tiêm': '💉', 'đom đóm': '🪲', 'họp tổ': '👥',
   'khóm tre': '🎍', 'chỏm mũ': '🧢', 'xóm quê': '🏡', 'cọp': '🐯',
   'gom góp': '📦',
+  // world 4 (tank truck)
+  'tướp': '🧶',
+  'tôm': '🦐', 'hộp sữa': '🧃', 'lốp xe': '🚗', 'đồ gốm': '🏺',
+  'cốm': '🌾', 'đốm lửa': '🔥', 'chôm chôm': '🍒', 'tốp ca': '👯',
+  'cơm': '🍚', 'tia chớp': '⚡', 'bơm': '⛽', 'bờm ngựa': '🐎',
+  'nơm': '🧺', 'lớp': '🏫', 'đớp cá': '🎣', 'lợp nhà': '🛖',
+  'sum họp': '👪', 'um tùm': '🌿', 'buồm': '⛵', 'quả muỗm': '🥭',
+  'nhuộm': '🎨', 'chùm nho': '🍇', 'tôm hùm': '🦞', 'mũm mĩm': '👶',
+  'cúp': '🏆', 'giúp đỡ': '🤝', 'búp chè': '🍃', 'chum': '🏺',
+  'búp bê': '🪆', 'bươm bướm': '🦋', 'quả mướp': '🥒', 'gươm': '🗡️',
+  'cườm': '📿', 'ướp cá': '🧊', 'bàn': '🪑', 'nhà hát': '🎭',
+  'nhãn': '🍈', 'thợ hàn': '🧑‍🏭', 'màn': '🛏️', 'bát': '🥣',
+  'hạt đỗ': '🌰', 'ngan': '🦆', 'chăn': '🧣', 'mắt': '👀',
+  'củ sắn': '🍠', 'thợ lặn': '🤿', 'trăn': '🐍', 'chim cắt': '🦅',
+  'bắt cá': '🐟', 'cân': '⚖️', 'vật': '🤼', 'tất': '🧦',
+  'mận': '🍑', 'sân': '🏟️', 'mật': '🍯', 'xe ben': '🚚',
+  'khen': '👍', 'rèn': '⚒️', 'quét': '🧹', 'hét': '📢',
+  'mẹt': '🧺', 'tên lửa': '🚀', 'tết': '🧧', 'nến': '🕯️',
+  'bến xe': '🚌', 'sên': '🐌', 'tết nơ': '🎀', 'rết': '🐛',
 };
 
 export function pic(word: string): string | undefined {

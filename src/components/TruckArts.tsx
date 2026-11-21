@@ -176,9 +176,63 @@ export function ContainerArt() {
   );
 }
 
+/** Tank truck (xe bồn) at a fuel station with a pump and a water tower. */
+export function TankArt() {
+  return (
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <rect x={0} y={0} width={360} height={340} fill="url(#sky)" />
+      <circle cx={300} cy={50} r={24} fill={SUN} stroke={INK} strokeWidth={3} />
+      <Cloud x={30} y={52} />
+      <Cloud x={170} y={96} s={0.8} />
+
+      {/* water tower */}
+      <g stroke={INK} strokeWidth={3}>
+        <path d="M50 340 L66 220 M130 340 L114 220" fill="none" strokeWidth={5} />
+        <path d="M58 290 H122 M62 255 H118" fill="none" />
+        <ellipse cx={90} cy={196} rx={52} ry={34} fill="#7FBFE6" />
+        <path d="M38 196 V176 Q90 140 142 176 V196" fill="#7FBFE6" />
+        <path d="M60 178 Q90 160 120 178" fill="none" stroke="#fff" strokeWidth={4} opacity={0.8} />
+      </g>
+      {/* fuel pump */}
+      <g stroke={INK} strokeWidth={3}>
+        <rect x={236} y={236} width={50} height={104} rx={6} fill="#E8523F" />
+        <rect x={244} y={246} width={34} height={26} rx={3} fill="#BFE4F2" />
+        <path d="M286 262 q20 0 20 24 v30" fill="none" strokeWidth={5} />
+      </g>
+
+      <path d="M0 330 Q90 306 180 328 T360 322 L360 345 L0 345 Z" fill="#C7E2A8" stroke={INK} strokeWidth={3} />
+      <Road lane="#fff" />
+
+      {/* chassis, tank and its hatch */}
+      <rect x={20} y={318} width={214} height={22} rx={5} fill="#5B6478" stroke={INK} strokeWidth={3} />
+      <path d="M30 318 V270 Q30 240 62 240 H190 Q222 240 222 270 V318 Z" fill="#DADDE6" stroke={INK} strokeWidth={3} />
+      <path d="M52 262 H200" stroke="#fff" strokeWidth={8} opacity={0.75} />
+      <path d="M92 240 V318 M160 240 V318" stroke={INK} strokeWidth={2.5} opacity={0.4} />
+      <rect x={108} y={224} width={36} height={16} rx={5} fill="#F2B632" stroke={INK} strokeWidth={3} />
+      <path d="M44 296 H208" stroke="#E8523F" strokeWidth={10} />
+      {/* ladder and hose */}
+      <path d="M214 250 V316 M226 250 V316 M214 262 H226 M214 280 H226 M214 298 H226" stroke={INK} strokeWidth={2.5} fill="none" />
+
+      {/* cab */}
+      <rect x={240} y={282} width={70} height={58} rx={12} fill="#3FA66B" stroke={INK} strokeWidth={3} />
+      <path d="M270 290 H298 Q304 290 305 297 L307 316 H270 Z" fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <rect x={248} y={292} width={18} height={24} rx={4} fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <circle cx={303} cy={327} r={6} fill="#FFE59A" stroke={INK} strokeWidth={2.5} />
+      <Wheel cx={64} />
+      <Wheel cx={116} />
+      <Wheel cx={190} />
+      <Wheel cx={276} />
+
+      <SvgPic emoji="🚧" x={40} y={404} size={44} />
+      <SvgPic emoji="⛽" x={290} y={396} size={50} />
+    </g>
+  );
+}
+
 const ART: Partial<Record<TruckKind, () => ReactElement>> = {
   cement: CementArt,
   container: ContainerArt,
+  tank: TankArt,
 };
 
 export function TruckArtFor({ kind }: { kind: TruckKind }) {

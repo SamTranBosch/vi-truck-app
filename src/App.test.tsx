@@ -14,6 +14,7 @@ import { Trace } from './components/activities/Trace';
 import type { Activity } from './content/types';
 import { WORLD1 } from './content/world1';
 import { WORLD3 } from './content/world3';
+import { WORLD4 } from './content/world4';
 import { setAudioBackend, type AudioBackend } from './lib/audio';
 import { STORAGE_KEY } from './lib/progress';
 
@@ -291,7 +292,7 @@ describe('App flow', () => {
 
 describe('every activity renders on its own', () => {
   beforeEach(() => { setAudioBackend(fake); });
-  const cases = [...WORLD1, ...WORLD3].flatMap((l) => l.activities.map((a, i) => [`${l.id}#${i} ${a.type}`, a] as const));
+  const cases = [...WORLD1, ...WORLD3, ...WORLD4].flatMap((l) => l.activities.map((a, i) => [`${l.id}#${i} ${a.type}`, a] as const));
   it.each(cases)('%s', (_name, a) => {
     const done = vi.fn();
     const { container, unmount } = render(<ActivityView activity={a} onDone={done} />);
