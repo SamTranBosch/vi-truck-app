@@ -82,22 +82,33 @@ async function all() {
   const apiKey = requireKey();
   let queue = todo;
   // a rate limit usually clears after a pause: retry what failed up to 3 more times, a minute apart
-  for (let round = 0; round < 4 && queue.length; round++) {
+  let gaveUp = false;
+  for (let round = 0; round < 4 && queue.length && !gaveUp; round++) {
     if (round > 0) {
       console.log(`Waiting 60 s, then retrying ${queue.length} clip(s) (round ${round + 1})`);
       await sleep(60000);
     }
     const failedNow: typeof todo = [];
+    let inARow = 0;
     for (const [i, c] of queue.entries()) {
+      if (inARow >= 4) {
+        // the provider refuses everything (daily quota used up?): stop wasting time, keep what we have
+        console.error('4 clips in a row failed: the provider is refusing requests. Stopping; run again later.');
+        failedNow.push(...queue.slice(i));
+        break;
+      }
       try {
         await writeFile(join(OUT, `${c.key}.mp3`), await synthesize(c.text, { provider, apiKey, voice, speed }));
         console.log(`[${i + 1}/${queue.length}] ${c.text}`);
+        inARow = 0;
       } catch (e) {
+        inARow++;
         failedNow.push(c);
         console.error(`[${i + 1}/${queue.length}] FAILED "${c.text}": ${(e as Error).message}`);
       }
       await sleep(1000); // free tiers queue requests: stay slow and polite
     }
+    gaveUp = inARow >= 4;
     queue = failedNow;
   }
   const failed = queue.length;
