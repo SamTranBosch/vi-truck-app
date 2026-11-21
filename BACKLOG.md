@@ -133,6 +133,6 @@ The book has 93 lessons plus two big reviews = 95 tiles after Mở đầu; with 
 | 3 | container truck | 32-47 | done (docs/WORLD3_CONTENT.md) |
 | 4 | tank truck | 48-62 + Ôn tập giữa học kì I (p. 92) | done (docs/WORLD4_CONTENT.md) |
 | 5 | dump truck | 63-78 | done (docs/WORLD5_CONTENT.md) |
-| 6 | crane / tow truck | 79-93 + Ôn tập cuối học kì I (p. 166) | not started |
+| 6 | crane truck | 79-93 + Ôn tập cuối học kì I (pp. 166-169) | done (docs/WORLD6_CONTENT.md) |
 Each world needs: page reading (pages x2 per lesson), a data file `worldN.ts`, tests like world2.test.ts, a drawing in TruckArts.tsx
 and (optional) a Canva picture. Final consonants are handled since World 3: vần targets, `isDecodable` needs the whole vần taught.

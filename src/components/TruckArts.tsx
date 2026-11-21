@@ -293,9 +293,68 @@ const ART: Partial<Record<TruckKind, () => ReactElement>> = {
   container: ContainerArt,
   tank: TankArt,
   dump: DumpArt,
+  crane: CraneArt,
 };
 
 export function TruckArtFor({ kind }: { kind: TruckKind }) {
   const Art = ART[kind] ?? TruckArt;
   return <Art />;
+}
+
+/** Mobile crane truck (xe cần cẩu) lifting a beam beside a building under construction. */
+export function CraneArt() {
+  return (
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <rect x={0} y={0} width={360} height={340} fill="url(#sky)" />
+      <circle cx={304} cy={46} r={24} fill={SUN} stroke={INK} strokeWidth={3} />
+      <Cloud x={40} y={50} />
+      <Cloud x={150} y={104} s={0.8} />
+
+      {/* building going up */}
+      <g stroke={INK} strokeWidth={3}>
+        <rect x={252} y={180} width={90} height={160} fill="#D9D3C7" />
+        <path d="M252 220 H342 M252 260 H342 M252 300 H342" fill="none" strokeWidth={2.5} />
+        <path d="M282 180 V340 M312 180 V340" fill="none" strokeWidth={2.5} />
+        <rect x={264} y={232} width={12} height={16} fill="#BFE4F2" />
+        <rect x={294} y={232} width={12} height={16} fill="#BFE4F2" />
+        <rect x={324} y={272} width={12} height={16} fill="#BFE4F2" />
+      </g>
+
+      <Road lane="#fff" />
+
+      {/* outriggers */}
+      <path d="M52 330 L34 346 M170 330 L188 346" stroke={INK} strokeWidth={5} fill="none" />
+      <rect x={24} y={344} width={22} height={6} rx={2} fill="#5B6478" stroke={INK} strokeWidth={2.5} />
+      <rect x={176} y={344} width={22} height={6} rx={2} fill="#5B6478" stroke={INK} strokeWidth={2.5} />
+
+      {/* chassis and crane turret */}
+      <rect x={20} y={318} width={180} height={20} rx={5} fill="#5B6478" stroke={INK} strokeWidth={3} />
+      <rect x={34} y={284} width={140} height={36} rx={6} fill="#F2B632" stroke={INK} strokeWidth={3} />
+      <path d="M46 302 H162" stroke={INK} strokeWidth={2.5} opacity={0.4} />
+      <rect x={60} y={254} width={52} height={32} rx={6} fill="#E8523F" stroke={INK} strokeWidth={3} />
+      <rect x={70} y={262} width={20} height={16} rx={3} fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+
+      {/* telescopic boom, hook and beam */}
+      <path d="M104 266 L214 108" stroke={INK} strokeWidth={16} />
+      <path d="M104 266 L214 108" stroke="#E8523F" strokeWidth={10} />
+      <path d="M156 192 L214 108" stroke="#F2B632" strokeWidth={6} />
+      <circle cx={104} cy={266} r={8} fill="#DADDE6" stroke={INK} strokeWidth={3} />
+      <path d="M214 108 V190" stroke={INK} strokeWidth={3} />
+      <path d="M214 190 q-9 0 -9 10 q0 8 9 8" fill="none" stroke={INK} strokeWidth={4} />
+      <path d="M186 214 L242 214 M186 214 L214 192 L242 214" stroke={INK} strokeWidth={2.5} fill="none" />
+      <rect x={178} y={214} width={72} height={14} rx={2} fill="#3E7CC4" stroke={INK} strokeWidth={3} />
+
+      {/* cab */}
+      <rect x={198} y={282} width={74} height={58} rx={12} fill="#3FA66B" stroke={INK} strokeWidth={3} />
+      <path d="M230 290 H258 Q264 290 265 297 L267 316 H230 Z" fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <rect x={206} y={292} width={18} height={24} rx={4} fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <circle cx={265} cy={327} r={6} fill="#FFE59A" stroke={INK} strokeWidth={2.5} />
+      <Wheel cx={70} />
+      <Wheel cx={124} />
+      <Wheel cx={238} />
+
+      <SvgPic emoji="🚧" x={30} y={404} size={44} />
+      <SvgPic emoji="🏗️" x={282} y={394} size={50} />
+    </g>
+  );
 }

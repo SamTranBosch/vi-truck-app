@@ -100,6 +100,8 @@ export const PICS: Record<string, string> = {
   'con hạc': '🦩', 'bản nhạc': '🎼', 'măng': '🎍', 'tắc kè': '🦎',
   'răng': '🦷', 'găng': '🧤', 'tia nắng': '☀️', 'xắc': '👜',
   'quả lắc': '🕰️',
+  // world 6 (crane truck)
+  'buồng': '🍌', 'buộc': '🪢', 'béc giê': '🐕', 'bông súng': '🌸', 'bậc thang': '🪜', 'chim ưng': '🦅', 'chong chóng': '🌀', 'chuông': '🔔', 'cá diếc': '🐟', 'cá mực': '🦑', 'cá nục': '🐠', 'cóc': '🐸', 'cúc': '🌼', 'cốc': '🥛', 'củ riềng': '🥔', 'dòng sông': '🏞️', 'giường': '🛏️', 'giọt sương': '💧', 'guốc': '👠', 'gõ chiêng': '🥁', 'gõ kẻng': '🛎️', 'gương': '🪞', 'gốc đa': '🌳', 'gừng': '🌰', 'hạt ngọc': '🦪', 'khiêng': '🛋️', 'khóm trúc': '🎋', 'luống': '🌱', 'lưng': '💆', 'lược': '💇', 'lợn eng éc': '🐖', 'lực sĩ': '💪', 'ngẩng lên': '🙄', 'nhà tầng': '🏢', 'nhấc lên': '📞', 'ong': '🐝', 'quả gấc': '🍊', 'rước đèn': '🏮', 'rừng': '🌲', 'sung': '🍏', 'sân trường': '🏫', 'thuốc': '💊', 'thông': '🎄', 'thùng rác': '🗑️', 'thược dược': '🌺', 'thợ mộc': '🪚', 'thức đêm': '🌙', 'tiệc': '🎉', 'võng': '🏖️', 'vầng trăng': '🌕', 'xe téc': '🚛', 'xiếc': '🎪', 'xuống': '⬇️', 'xà beng': '⛏️', 'xúc đất': '🏗️', 'xẻng': '🥄', 'yểng': '🐦', 'đuốc': '🔥', 'đọc': '📖', 'đồng lúa': '🌾', 'ốc': '🐌',
 };
 
 export function pic(word: string): string | undefined {

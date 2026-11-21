@@ -4,6 +4,7 @@ import { WORLD2 } from './world2';
 import { WORLD3 } from './world3';
 import { WORLD4 } from './world4';
 import { WORLD5 } from './world5';
+import { WORLD6 } from './world6';
 
 /**
  * All worlds in play order. A world opens when the one before it is finished.
@@ -15,6 +16,7 @@ export const WORLDS: World[] = [
   { id: 'w3', name: 'Xe container', truck: 'container', icon: '🚛', lessons: WORLD3 },
   { id: 'w4', name: 'Xe bồn', truck: 'tank', icon: '⛽', lessons: WORLD4 },
   { id: 'w5', name: 'Xe ben', truck: 'dump', icon: '🚚', lessons: WORLD5 },
+  { id: 'w6', name: 'Xe cần cẩu', truck: 'crane', icon: '🚧', lessons: WORLD6 },
 ];
 
 export const ALL_LESSONS: Lesson[] = WORLDS.flatMap((w) => w.lessons);
