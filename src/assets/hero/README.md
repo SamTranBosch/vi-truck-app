@@ -5,3 +5,7 @@ Also optional: `mascot.webp` (square, replaces the drawn mascot) and `celebrate.
 Put a 3:4 portrait picture here named `truck.png`, `truck.jpg` or `truck.webp` (about 1200 x 1600 px is plenty).
 When it exists, the map shows it under the mud instead of the built-in drawing (`TruckArt.tsx`).
 Delete the file to go back to the built-in drawing.
+
+Pictures for the other trucks are named `truck-<kind>.webp` (or png/jpg): `truck-cement.webp`, `truck-container.webp`,
+`truck-tank.webp`, `truck-dump.webp`, `truck-crane.webp`. `truck.webp` stays the fire truck. Each is optional;
+without it the built-in drawing is used (the cement mixer is drawn in `src/components/TruckArts.tsx`).

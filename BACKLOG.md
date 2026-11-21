@@ -123,3 +123,16 @@ Ideas not done: first-run welcome screen with the mascot; "Add to Home Screen" h
 
 ## Zalo wrapper review (2026-11-21)
 `iconclub/zalo-tts` is a small Python client (needs Python 3.7-3.8 and PyAudio, no licence stated) for the same official endpoint our script already calls (`POST https://api.zalo.ai/v1/tts/synthesize`, header `apikey`, form `input`, `speed` 0.8-1.2, `speaker_id` 1 South women, 2 North women, 3 South men, 4 North men). We keep our own Node script (no extra dependency, no code copied). Changes: voice ids aligned with the wrapper, retry on error 155. Not verified: whether Zalo still hands out free keys / what the terms say; check when creating the key.
+
+## Multi-world plan (2026-11-21)
+The book has 93 lessons plus two big reviews = 95 tiles after Mở đầu; with Mở đầu that is 96 = six trucks of 16.
+| World | Truck | Lessons | Status |
+|---|---|---|---|
+| 1 | fire truck | Mở đầu, 1-15 | done |
+| 2 | cement mixer | 16-31 | done (docs/WORLD2_CONTENT.md) |
+| 3 | container truck | 32-47 | not started: v y, Chữ hoa, am ap, ăm ăp, âm âp, em ep, êm êp, im ip, iêm, om op + 2 stories, 2 reviews, 1 review |
+| 4 | tank truck | 48-62 + Ôn tập giữa học kì I (p. 92) | not started |
+| 5 | dump truck | 63-78 | not started |
+| 6 | crane / tow truck | 79-93 + Ôn tập cuối học kì I (p. 166) | not started |
+Each world needs: page reading (pages x2 per lesson), a data file `worldN.ts`, tests like world2.test.ts, a drawing in TruckArts.tsx
+and (optional) a Canva picture. From World 3 on the parser must also handle final consonants (am, ap, ăm ...): `isDecodable(..., allowCodas)` exists for that.
