@@ -268,6 +268,7 @@ describe('App flow', () => {
     await tick(500);
     fireEvent.pointerUp(gear);
     expect(screen.queryByRole('dialog')).toBeNull(); // a short tap (a child) opens nothing
+    expect(screen.getByRole('status')).toHaveTextContent(/giữ nút/); // but tells the parent how
     fireEvent.pointerDown(gear);
     await tick(1600);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -276,6 +277,21 @@ describe('App flow', () => {
     await tick(50);
     fireEvent.click(screen.getByRole('button', { name: 'Xong' }));
     expect(screen.getByLabelText('Đã lau 0 trên 16 mảnh bùn')).toBeInTheDocument();
+  });
+
+  it('parent mode can jump to any truck and open any lesson; the child sees them locked until then', async () => {
+    await boot();
+    const chips = screen.getAllByRole('button', { name: /chưa mở/ });
+    expect(chips.length).toBeGreaterThanOrEqual(5); // trucks 2..6 are locked
+    expect(tile('bai-5')).toHaveClass('hit-locked');
+    const gear = screen.getByRole('button', { name: /phụ huynh/ });
+    fireEvent.pointerDown(gear);
+    await tick(1600);
+    fireEvent.click(screen.getByRole('button', { name: /6\. Xe cần cẩu/ }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('group', { name: /Xe cần cẩu/ })).toBeInTheDocument();
+    expect(tile('bai-80')).not.toHaveClass('hit-locked');
+    expect(screen.queryAllByRole('button', { name: /chưa mở/ })).toHaveLength(0);
   });
 
   it('every lesson opens and every activity of every lesson renders content', async () => {

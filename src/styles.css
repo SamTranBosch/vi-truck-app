@@ -379,3 +379,15 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 .world-chip.on { background: #ffe38a; transform: translateY(-2px); }
 .world-chip.locked { opacity: 0.55; }
 .world-chip .pic-ui { width: 28px; height: 28px; }
+
+/* parent button: long-press ring, no text selection or iOS callout */
+.gear { position: relative; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+.gear.holding::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%;
+  border: 4px solid #2f7dd1; clip-path: inset(0 100% 0 0);
+  animation: gear-fill 1.5s linear forwards;
+}
+@keyframes gear-fill { to { clip-path: inset(0 0 0 0); } }
+@media (prefers-reduced-motion: reduce) { .gear.holding::after { animation-duration: 1.5s; } }
+.jump-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.jump-btn { font-size: 0.95rem; padding: 10px 8px; }

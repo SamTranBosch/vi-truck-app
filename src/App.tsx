@@ -35,6 +35,9 @@ export function App() {
   const [parentOpen, setParentOpen] = useState(false);
   const [hint, setHint] = useState('');
   const [worldPick, setWorldPick] = useState<number | null>(null);
+  /** parent mode: all trucks and lessons can be opened (until the app is closed) */
+  const [openAll, setOpenAll] = useState(false);
+  const [holding, setHolding] = useState(false);
   const holdTimer = useRef<number | null>(null);
   const unlocked = useRef(false);
   const latest = useRef<Progress | null>(null);
@@ -128,11 +131,22 @@ export function App() {
   };
 
   const startHold = () => {
-    holdTimer.current = window.setTimeout(() => setParentOpen(true), HOLD_MS);
+    setHolding(true);
+    holdTimer.current = window.setTimeout(() => {
+      holdTimer.current = null;
+      setHolding(false);
+      setParentOpen(true);
+    }, HOLD_MS);
   };
   const endHold = () => {
-    if (holdTimer.current) window.clearTimeout(holdTimer.current);
-    holdTimer.current = null;
+    setHolding(false);
+    if (holdTimer.current) {
+      // let go too early: say how to open it (quietly, the child is not told)
+      window.clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+      setHint('Dành cho phụ huynh: giữ nút ⚙️ khoảng 2 giây để mở.');
+      window.setTimeout(() => setHint(''), 3500);
+    }
   };
 
   if (!progress) return <div className="boot" role="status">Đang tải…</div>;
@@ -148,7 +162,7 @@ export function App() {
   const lesson = playing ? WORLD.find((l) => l.id === playing) : undefined;
   const done = doneCount(ids, progress);
   const allDone = done === ids.length;
-  const nextOpen = !!nextWorld && worldOpen(WORLDS, worldIdx + 1, progress.completed);
+  const nextOpen = !!nextWorld && worldOpen(WORLDS, worldIdx + 1, progress.completed, openAll);
 
   if (!progress.welcomed) {
     return (
@@ -184,7 +198,7 @@ export function App() {
             </span>
             <button
               type="button"
-              className="btn btn-round btn-light gear"
+              className={`btn btn-round btn-light gear${holding ? ' holding' : ''}`}
               aria-label="Dành cho phụ huynh: giữ 2 giây để mở"
               onPointerDown={startHold}
               onPointerUp={endHold}
@@ -198,7 +212,7 @@ export function App() {
           {WORLDS.length > 1 && (
             <nav className="worlds" aria-label="Chọn xe">
               {WORLDS.map((w, i) => {
-                const open = worldOpen(WORLDS, i, progress.completed);
+                const open = worldOpen(WORLDS, i, progress.completed, openAll);
                 const clean = w.lessons.every((l) => progress.completed[l.id]);
                 return (
                   <button
@@ -224,6 +238,7 @@ export function App() {
             truck={world.truck}
             name={world.name}
             progress={progress}
+            openAll={openAll}
             justWiped={justWiped}
             onOpen={openLesson}
             onLocked={() => showHint(PHRASES.notYet)}
@@ -237,7 +252,7 @@ export function App() {
               className="btn btn-go glow play-next"
               aria-label="Học bài tiếp theo"
               onClick={() => {
-                const next = WORLD.find((_, i) => tileState(ids, progress, i) === 'current');
+                const next = WORLD.find((_, i) => tileState(ids, progress, i, openAll) === 'current');
                 if (next) openLesson(next.id);
               }}
             >
@@ -280,6 +295,15 @@ export function App() {
           progress={progress}
           lessons={ALL_LESSONS}
           installHint={needsInstallHint(currentEnv())}
+          worlds={WORLDS}
+          openAll={openAll}
+          onOpenAll={setOpenAll}
+          onJump={(i) => {
+            setOpenAll(true);
+            setJustWiped(null);
+            setWorldPick(i);
+            setParentOpen(false);
+          }}
           onChange={update}
           onReset={() => {
             update({ ...emptyProgress(), welcomed: true, soundOn: progress.soundOn, musicOn: progress.musicOn });

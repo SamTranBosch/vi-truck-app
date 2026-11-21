@@ -26,7 +26,7 @@ export function lessonById(id: string): Lesson | undefined {
 }
 
 /** A world is open when every lesson of the world before it is done. */
-export function worldOpen(worlds: World[], index: number, completed: Record<string, number>): boolean {
-  if (index <= 0) return true;
+export function worldOpen(worlds: World[], index: number, completed: Record<string, number>, openAll = false): boolean {
+  if (index <= 0 || openAll) return true;
   return worlds[index - 1].lessons.every((l) => completed[l.id]);
 }

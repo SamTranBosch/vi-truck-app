@@ -107,8 +107,9 @@ export function markComplete(p: Progress, lessonId: string, now = Date.now()): P
 export type TileState = 'done' | 'current' | 'locked';
 
 /** Lessons unlock in book order: a tile is playable only when everything before it is done. */
-export function tileState(lessonIds: string[], p: Progress, index: number): TileState {
+export function tileState(lessonIds: string[], p: Progress, index: number, openAll = false): TileState {
   if (p.completed[lessonIds[index]]) return 'done';
+  if (openAll) return 'current';
   const firstOpen = lessonIds.findIndex((id) => !p.completed[id]);
   return firstOpen === index ? 'current' : 'locked';
 }

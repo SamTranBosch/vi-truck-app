@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { audioClipCount } from '../lib/audio';
-import type { Lesson } from '../content/types';
+import type { Lesson, World } from '../content/types';
 import { exportProgress, parseProgress, shakyLessons, type Progress } from '../lib/progress';
 
 interface Props {
@@ -12,10 +12,15 @@ interface Props {
   lessons?: Lesson[];
   /** show the iPhone "Add to Home Screen" tip */
   installHint?: boolean;
+  /** parent mode: jump to any truck, open every lesson */
+  worlds?: World[];
+  openAll?: boolean;
+  onOpenAll?: (on: boolean) => void;
+  onJump?: (worldIndex: number) => void;
 }
 
 /** Parent area: sound on/off, back up / restore progress, start over. */
-export function Settings({ progress, onChange, onReset, onClose, lessons = [], installHint = false }: Props) {
+export function Settings({ progress, onChange, onReset, onClose, lessons = [], installHint = false, worlds = [], openAll = false, onOpenAll, onJump }: Props) {
   const [text, setText] = useState('');
   const [msg, setMsg] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
@@ -79,6 +84,23 @@ export function Settings({ progress, onChange, onReset, onClose, lessons = [], i
           {clips > 0 ? `Giọng cô giáo: ${clips} đoạn âm thanh có sẵn trong máy.` : 'Đang dùng giọng đọc của thiết bị (chưa có âm thanh cô giáo).'}
         </p>
         <p className="small">Đã xong {Object.keys(progress.completed).length} bài.</p>
+        {worlds.length > 1 && (
+          <section className="jump" aria-label="Chế độ phụ huynh: chọn xe">
+            <h3>Chọn xe nhanh</h3>
+            <p className="small">Bé vẫn thấy các xe sau bị khóa. Chọn xe ở đây sẽ mở khóa tất cả xe và bài cho đến khi đóng ứng dụng.</p>
+            <div className="jump-list">
+              {worlds.map((w, i) => (
+                <button key={w.id} type="button" className="btn btn-sky jump-btn" onClick={() => onJump?.(i)}>
+                  {i + 1}. {w.name}
+                </button>
+              ))}
+            </div>
+            <label className="row-check">
+              <input type="checkbox" checked={openAll} onChange={(e) => onOpenAll?.(e.target.checked)} />
+              Mở tất cả xe và bài (chế độ phụ huynh)
+            </label>
+          </section>
+        )}
         <section className="shaky" aria-label="Bài bé hay nhầm">
           <h3>Bài bé hay nhầm</h3>
           {shaky.length === 0 ? (

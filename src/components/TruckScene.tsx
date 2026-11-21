@@ -16,6 +16,8 @@ interface Props {
   justWiped?: string | null;
   onOpen: (lessonId: string) => void;
   onLocked: () => void;
+  /** parent mode: every tile can be opened */
+  openAll?: boolean;
 }
 
 /**
@@ -33,7 +35,7 @@ const MUD = '#8B6B4A';
 const MUD_DARK = '#6B4F34';
 const MUD_LIGHT = '#A98763';
 
-export function TruckScene({ lessons, truck = 'fire', name = 'Xe cứu hỏa', progress, justWiped, onOpen, onLocked }: Props) {
+export function TruckScene({ lessons, truck = 'fire', name = 'Xe cứu hỏa', progress, justWiped, onOpen, onLocked, openAll = false }: Props) {
   const hero = HERO.get(truck);
   const ids = lessons.map((l) => l.id);
   const cells = Array.from({ length: COLS * ROWS }, (_, cell) => {
@@ -48,7 +50,7 @@ export function TruckScene({ lessons, truck = 'fire', name = 'Xe cứu hỏa', p
         {hero ? <image href={hero} x={0} y={0} width={SCENE_W} height={SCENE_H} preserveAspectRatio="xMidYMid slice" /> : <TruckArtFor kind={truck} />}
         {cells.map(({ cell, index, lesson }) => {
           if (!lesson) return null;
-          const state = tileState(ids, progress, index);
+          const state = tileState(ids, progress, index, openAll);
           const wiping = state === 'done' && justWiped === lesson.id;
           if (state === 'done' && !wiping) return null;
           const r = cellRect(cell);
@@ -80,7 +82,7 @@ export function TruckScene({ lessons, truck = 'fire', name = 'Xe cứu hỏa', p
       <div className="scene-hit">
         {cells.map(({ cell, index, lesson }) => {
           if (!lesson) return <span key={cell} />;
-          const state = tileState(ids, progress, index);
+          const state = tileState(ids, progress, index, openAll);
           const name = lesson.title;
           const text = state === 'done' ? `${name} — đã xong, chơi lại` : state === 'current' ? `${name} — bắt đầu` : `${name} — chưa mở`;
           return (
