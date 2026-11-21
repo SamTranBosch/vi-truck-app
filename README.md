@@ -27,7 +27,12 @@ as a file (move a child to a new device), reset.
 Until clips exist the app uses the phone's built-in Vietnamese voice (northern, robotic). The real teacher voice is
 **baked in**: mp3 files in `public/audio/` that the service worker caches for offline use.
 
-Providers with Southern female voices (both have free tiers; the app needs only ~3,000 characters):
+**Current voice: VieNeu-TTS** (open source, Apache-2.0, github.com/pnnbao97/VieNeu-TTS), voice `Thục Đoan` (Southern female, story style),
+made by the workflow on the GitHub runner: no key, no quota, about 4 minutes for all clips. Other Southern women: `Mỹ Duyên`, `Kim Thanh`,
+`Thùy Dung`. To change: Actions -> Teacher voice -> provider `vieneu`, voice `south-female`, mode `samples` -> listen; then mode `all`,
+the chosen voice, and tick **force** (it replaces the existing clips). Speed is a tempo factor (`--speed 0.9`, lower = slower).
+
+Web-API providers with Southern female voices (free tiers; Zalo's quota was used up in testing, see BACKLOG):
 | Provider | Voice ids | Key variable |
 |---|---|---|
 | FPT.AI (docs.fpt.ai, v5) | `lannhi`, `linhsan` | `FPT_API_KEY` (console.fpt.ai -> create project -> enable Text to Speech) |
