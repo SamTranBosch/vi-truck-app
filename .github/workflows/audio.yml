@@ -1,6 +1,8 @@
 name: Teacher voice
 
-# Manual workflow. Needs a repository secret (Settings -> Secrets and variables -> Actions):
+# Manual workflow.
+#   vieneu (default): the open-source VieNeu-TTS model runs on the GitHub runner. No key, no quota.
+#   fpt / zalo: web APIs, need a repository secret (Settings -> Secrets and variables -> Actions):
 #   FPT_API_KEY  (FPT.AI, voices lannhi / linhsan = Southern female)   or   ZALO_API_KEY  (Zalo, voice 1 = South female)
 # Step 1: run with mode "samples", download the artifact "voice-samples", listen, pick a voice.
 # Step 2: run with mode "all" and the chosen voice: it commits public/audio/*.mp3 and redeploys.
@@ -10,12 +12,12 @@ on:
       provider:
         description: TTS provider
         type: choice
-        options: [fpt, zalo]
-        default: fpt
+        options: [vieneu, fpt, zalo]
+        default: vieneu
       voice:
-        description: 'Voice id (fpt: lannhi or linhsan, zalo: 1). For samples you may list several: lannhi,linhsan'
+        description: 'Voice (vieneu: south-female = the 4 Southern women for samples, or one name: Thục Đoan, Mỹ Duyên, Kim Thanh, Thùy Dung; fpt: lannhi or linhsan; zalo: 1)'
         type: string
-        default: lannhi
+        default: south-female
       mode:
         description: samples = a few clips to listen to; all = generate every clip and publish
         type: choice
@@ -44,6 +46,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - uses: actions/setup-python@v5
+        if: inputs.provider == 'vieneu'
+        with:
+          python-version: '3.12'
+      - name: Install VieNeu-TTS and ffmpeg
+        if: inputs.provider == 'vieneu'
+        run: |
+          pip install vieneu soundfile numpy
+          which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
 
       - name: Samples
         if: inputs.mode == 'samples'

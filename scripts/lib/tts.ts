@@ -5,7 +5,8 @@
  * They are covered by mocked-fetch tests only: nobody has called the live APIs from this code yet.
  */
 
-export type Provider = 'fpt' | 'zalo';
+/** vieneu = the open-source VieNeu-TTS model, run locally by scripts/vieneu_synth.py (no key, no quota). */
+export type Provider = 'fpt' | 'zalo' | 'vieneu';
 
 export interface VoiceInfo {
   id: string;
@@ -18,6 +19,13 @@ export const VOICES: Record<Provider, VoiceInfo[]> = {
     { id: 'linhsan', label: 'Linh San, Southern female' },
     { id: 'banmai', label: 'Ban Mai, Northern female (for comparison only)' },
   ],
+  vieneu: [
+    // Southern female voices of VieNeu-TTS v3 Turbo (from its bundled voice list); listen, then pick one
+    { id: 'Thục Đoan', label: 'Thục Đoan, Southern female, story style' },
+    { id: 'Mỹ Duyên', label: 'Mỹ Duyên, Southern female, story style' },
+    { id: 'Kim Thanh', label: 'Kim Thanh, Southern female, story style' },
+    { id: 'Thùy Dung', label: 'Thùy Dung, Southern female, news style' },
+  ],
   zalo: [
     // Ids as in the open-source ZaloTTS wrapper (github.com/iconclub/zalo-tts): 1 and 2 women, 3 and 4 men.
     { id: '1', label: 'South female' },
@@ -27,9 +35,9 @@ export const VOICES: Record<Provider, VoiceInfo[]> = {
 };
 
 /** Slow, clear reading suits a 5-year-old. */
-export const DEFAULT_SPEED: Record<Provider, string> = { fpt: '-1', zalo: '0.8' };
-export const DEFAULT_VOICE: Record<Provider, string> = { fpt: 'lannhi', zalo: '1' };
-export const KEY_ENV: Record<Provider, string> = { fpt: 'FPT_API_KEY', zalo: 'ZALO_API_KEY' };
+export const DEFAULT_SPEED: Record<Provider, string> = { fpt: '-1', zalo: '0.8', vieneu: '0.9' };
+export const DEFAULT_VOICE: Record<Provider, string> = { fpt: 'lannhi', zalo: '1', vieneu: 'Thục Đoan' };
+export const KEY_ENV: Record<Provider, string> = { fpt: 'FPT_API_KEY', zalo: 'ZALO_API_KEY', vieneu: '' };
 
 export interface SynthOptions {
   provider: Provider;
@@ -61,6 +69,7 @@ async function fetchWhenReady(url: string, o: Required<Pick<SynthOptions, 'fetch
 }
 
 export async function synthesize(text: string, opt: SynthOptions): Promise<Buffer> {
+  if (opt.provider === 'vieneu') throw new Error('vieneu runs locally through scripts/vieneu_synth.py, not through synthesize()');
   // every request gets 30 s: a request that never answers must not freeze the whole run
   const fetchFn: typeof fetch = opt.fetchFn ?? ((input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(30000) }));
   const poll = { fetchFn, sleepFn: opt.sleepFn ?? realSleep, pollMs: opt.pollMs ?? 800, pollTries: opt.pollTries ?? 20 };
