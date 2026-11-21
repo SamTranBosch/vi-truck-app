@@ -170,3 +170,17 @@ Printed words on pp. 15, 19, 23 and 31 were re-read at 150 dpi. One correction c
 - The picture words on the alphabet page (p. 3).
 - Pages 8–31 are done; the next block (lessons 16–27, pp. 32–60) is World 2.
 - Where my picture reading is marked (?), a second look at higher resolution.
+
+## Audit against the book (2026-11-21, pages 4-31)
+
+Every lesson of World 1 was compared with its page(s): the letters and tones taught, the pictures used, the reading lines, the review tables (which cells the book crosses out) and the writing exercise.
+
+**Matches the book:** letters and tones per lesson; Bài 9 and 15 tables (ce blocked; ge, gê, gi, gia blocked); the Bài 15 "find the word for the picture" set (bí, lê, hổ, gà, đĩa); the numbers 0-5 in the writing steps; the Tập đọc of Bài 5, 6, 9; all of our sound and tone hunts only use words whose sound or tone is right (checked by the parser in tests, and again by eye against the book pictures).
+
+**Fixed:** "cờ" and "cờ đỏ" showed a generic red flag; the book shows the Vietnamese flag, so they now use that. "cổ" (Bài 5 reading) now has a picture (the book shows a giraffe's neck).
+
+**Differences left on purpose (own examples, still correct):**
+- Meet-words differ from the book in Bài 4 (we use nho, the book "co"), Bài 7 (đèn, the book "đe" = anvil) and Bài 13 (bí, the book "bi" = marbles); each of ours has a matching picture.
+- Bài 13 writing: we practise "bìa" (book cover, a real word with a picture); the book writes "bia" (stone stele, no picture available that matches).
+- Reading texts of Bài 11, 12, 13, 15 are our own sentences using only learned letters (the book's texts are copyrighted); the book's tell different small stories.
+- Hunt pictures: the book uses photos; ours use cartoon emoji for the same words or other words with the same sound.
