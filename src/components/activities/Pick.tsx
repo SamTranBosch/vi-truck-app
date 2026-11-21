@@ -3,6 +3,7 @@ import { Pic } from '../Pic';
 import { PICS, pic } from '../../content/pictures';
 import { PHRASES } from '../../content/phrases';
 import { sfx, speak } from '../../lib/audio';
+import { wrong as miss } from '../../lib/misses';
 import { shuffle } from '../../lib/rng';
 import { Dots, SpeakButton, WordText, cheer, useIdleHint, useLater } from '../shared';
 import type { ActivityProps } from './types';
@@ -34,7 +35,7 @@ export function Pick({ activity, onDone }: ActivityProps<'pick'>) {
   const tap = (word: string) => {
     if (right) return;
     if (word !== target) {
-      sfx('bad');
+      miss();
       setWrong(word);
       later(() => setWrong(null), 450);
       return;

@@ -3,6 +3,7 @@ import { Pic } from '../Pic';
 import { pic } from '../../content/pictures';
 import { soundPrompt, tonePrompt } from '../../content/speech';
 import { sfx, speak } from '../../lib/audio';
+import { wrong as miss } from '../../lib/misses';
 import { TONE_MARK, hasSound, hasTone, targetLabel } from '../../lib/vietnamese';
 import { SpeakButton, ToneBadge, WordText, cheer, useIdleHint, useLater } from '../shared';
 import type { ActivityProps } from './types';
@@ -33,7 +34,7 @@ export function Hunt({ activity, onDone }: ActivityProps<'hunt'>) {
       return;
     }
     if (!right.has(word)) {
-      sfx('bad');
+      miss();
       setWrong(word);
       later(() => setWrong(null), 450);
       return;

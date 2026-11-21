@@ -48,3 +48,17 @@ export interface Lesson {
   teaches: { letters?: string[]; tones?: Tone[] };
   activities: Activity[];
 }
+
+/** Kinds of truck hidden under the mud, one per world. */
+export type TruckKind = 'fire' | 'cement' | 'container' | 'tank' | 'dump' | 'crane';
+
+/** A world is one truck covered in 16 mud tiles, one tile per lesson. */
+export interface World {
+  id: string;
+  /** Vietnamese name of the truck, e.g. "Xe cứu hỏa" */
+  name: string;
+  truck: TruckKind;
+  /** emoji shown on the world picker */
+  icon: string;
+  lessons: Lesson[];
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { audioKey } from './audio';
-import { emptyProgress, doneCount, exportProgress, markComplete, parseProgress, tileState } from './progress';
+import { emptyProgress, doneCount, exportProgress, markComplete, parseProgress, recordMiss, resumeStep, setResume, shakyLessons, tileState } from './progress';
 import { shuffle, shuffleDifferent } from './rng';
 import { dilate, evaluateTrace } from './tracing';
 
@@ -49,9 +49,47 @@ describe('progress', () => {
     expect(parseProgress(null)).toBeNull();
   });
 
+  it('old saves without the new fields still load; a finished lesson implies the welcome was seen', () => {
+    const p = parseProgress({ version: 1, completed: { a: 5 } });
+    expect(p).toMatchObject({ welcomed: true, misses: {}, resume: null });
+    expect(parseProgress({ version: 1, completed: {} })?.welcomed).toBe(false);
+  });
+
+  it('keeps only sane misses and resume data', () => {
+    const p = parseProgress({ version: 1, completed: {}, misses: { a: 3, b: -1, c: 'x', d: 2.9 }, resume: { id: 'a', step: 2 } });
+    expect(p?.misses).toEqual({ a: 3, d: 2 });
+    expect(p?.resume).toEqual({ id: 'a', step: 2 });
+    expect(parseProgress({ version: 1, completed: {}, resume: { id: 'a', step: 0 } })?.resume).toBeNull();
+    expect(parseProgress({ version: 1, completed: {}, resume: { id: 5, step: 2 } })?.resume).toBeNull();
+  });
+
+  it('counts misses and lists the shaky lessons worst first', () => {
+    let p = emptyProgress();
+    for (let i = 0; i < 4; i++) p = recordMiss(p, 'bai-2');
+    for (let i = 0; i < 6; i++) p = recordMiss(p, 'bai-4');
+    p = recordMiss(p, 'bai-1');
+    expect(shakyLessons(p)).toEqual([
+      { id: 'bai-4', misses: 6 },
+      { id: 'bai-2', misses: 4 },
+    ]);
+    expect(shakyLessons(p, 1, 1)).toEqual([{ id: 'bai-4', misses: 6 }]);
+  });
+
+  it('remembers where a lesson was left and forgets it at step 0', () => {
+    let p = setResume(emptyProgress(), 'bai-4', 3);
+    expect(resumeStep(p, 'bai-4')).toBe(3);
+    expect(resumeStep(p, 'bai-5')).toBe(0);
+    expect(setResume(p, 'bai-4', 3)).toBe(p);
+    p = setResume(p, 'bai-4', 0);
+    expect(p.resume).toBeNull();
+    // leaving another lesson alone
+    const q = setResume(emptyProgress(), 'bai-4', 2);
+    expect(setResume(q, 'bai-9', 0)).toBe(q);
+  });
+
   it('drops entries that are not timestamps', () => {
     const p = parseProgress({ version: 1, completed: { a: 5, b: 'x', c: null }, soundOn: false });
-    expect(p).toEqual({ version: 1, completed: { a: 5 }, soundOn: false, musicOn: true });
+    expect(p).toEqual({ version: 1, completed: { a: 5 }, soundOn: false, musicOn: true, welcomed: true, misses: {}, resume: null });
   });
 });
 

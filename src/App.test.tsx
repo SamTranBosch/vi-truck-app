@@ -37,7 +37,11 @@ const fake: AudioBackend = {
   stop: () => {},
 };
 
-async function boot() {
+async function boot(opts: { fresh?: boolean } = {}) {
+  // most tests are about the map, so skip the welcome screen unless asked
+  if (!opts.fresh && !localStorage.getItem(STORAGE_KEY)) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, completed: {}, welcomed: true }));
+  }
   render(<App />);
   await act(async () => {
     await vi.advanceTimersByTimeAsync(50);
@@ -45,6 +49,92 @@ async function boot() {
 }
 const tick = (ms: number) => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
 const tile = (id: string) => document.querySelector<HTMLButtonElement>(`[data-lesson="${id}"]`)!;
+
+describe('welcome, resume and parent view', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    spoken.length = 0;
+    setAudioBackend(fake);
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('a brand-new install opens on the welcome screen with one big play button', async () => {
+    await boot({ fresh: true });
+    expect(screen.queryByRole('group', { name: /dưới lớp bùn/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Bắt đầu chơi' }));
+    await tick(50);
+    expect(screen.getByRole('group', { name: /dưới lớp bùn/ })).toBeInTheDocument();
+    expect(spoken.some((t) => t.includes('Chào bé'))).toBe(true);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).welcomed).toBe(true);
+  });
+
+  it('someone who already finished a lesson never sees the welcome screen', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, completed: { 'mo-dau': 1 } }));
+    await boot({ fresh: true });
+    expect(screen.queryByRole('button', { name: 'Bắt đầu chơi' })).toBeNull();
+    expect(screen.getByRole('group', { name: /dưới lớp bùn/ })).toBeInTheDocument();
+  });
+
+  it('opens a lesson at the step where the child left it, and remembers the step as it changes', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, completed: {}, welcomed: true, resume: { id: 'mo-dau', step: 1 } }));
+    await boot();
+    fireEvent.click(screen.getByRole('button', { name: 'Học bài tiếp theo' }));
+    expect(screen.getByRole('list', { name: new RegExp(`^Bước 2 trên ${WORLD1[0].activities.length}`) })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Quay lại bước trước' }));
+    await tick(50);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).resume).toBeNull();
+  });
+
+  it('the parent view lists lessons with many wrong taps, and nothing when there are none', async () => {
+    await boot();
+    fireEvent.pointerDown(screen.getByRole('button', { name: /Dành cho phụ huynh/ }));
+    await tick(1600);
+    expect(screen.getByText(/Chưa có bài nào bé nhầm nhiều/)).toBeInTheDocument();
+  });
+
+  it('shows the shaky lesson by name', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, completed: { 'mo-dau': 1 }, misses: { 'bai-1': 5, 'bai-2': 1 } }));
+    await boot();
+    fireEvent.pointerDown(screen.getByRole('button', { name: /Dành cho phụ huynh/ }));
+    await tick(1600);
+    const shaky = screen.getByRole('region', { name: 'Bài bé hay nhầm' });
+    expect(shaky).toHaveTextContent('Bài 1: a – c');
+    expect(shaky).toHaveTextContent('nhầm 5 lần');
+    expect(shaky).not.toHaveTextContent('Bài 2');
+  });
+});
+
+describe('nudges and miss counting', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    spoken.length = 0;
+    setAudioBackend(fake);
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('FindLetter: after a quiet moment a letter still to find wiggles', async () => {
+    render(<FindLetter activity={{ type: 'findLetter', targets: ['a'], others: ['e', 'o', 's'] }} onDone={() => {}} />);
+    await tick(100);
+    expect(document.querySelector('.letter-btn.hint')).toBeNull();
+    await tick(9500);
+    const hinted = document.querySelector('.letter-btn.hint');
+    expect(hinted).not.toBeNull();
+    expect(hinted).toHaveAttribute('aria-label', 'chữ a');
+  });
+
+  it('a wrong tap reaches whoever is counting', async () => {
+    const { setMissListener } = await import('./lib/misses');
+    let n = 0;
+    setMissListener(() => n++);
+    render(<FindLetter activity={{ type: 'findLetter', targets: ['a'], others: ['e', 'o', 's'] }} onDone={() => {}} />);
+    await tick(100);
+    fireEvent.click(screen.getAllByRole('button', { name: 'chữ e' })[0]);
+    expect(n).toBe(1);
+    setMissListener(null);
+  });
+});
 
 describe('App flow', () => {
   beforeEach(() => {

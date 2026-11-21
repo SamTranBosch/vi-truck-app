@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pic } from '../Pic';
 import { PHRASES } from '../../content/phrases';
 import { sfx, speak } from '../../lib/audio';
+import { wrong as miss } from '../../lib/misses';
 import { shuffleDifferent } from '../../lib/rng';
 import { Dots, NextButton, PrevButton, SpeakButton, cheer, useLater } from '../shared';
 import type { ActivityProps } from './types';
@@ -49,7 +50,7 @@ export function Story({ activity, onDone }: ActivityProps<'story'>) {
       return;
     }
     if (sceneIndex !== picked.length) {
-      sfx('bad');
+      miss();
       setWrong(sceneIndex);
       later(() => setWrong(null), 450);
       return;

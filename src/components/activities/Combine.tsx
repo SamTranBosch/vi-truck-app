@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { PHRASES } from '../../content/phrases';
 import { combineSay, letterSay } from '../../content/speech';
 import { sfx, speak } from '../../lib/audio';
+import { wrong } from '../../lib/misses';
 import { Dots, cheer, useLater } from '../shared';
 import type { ActivityProps } from './types';
 
@@ -22,7 +23,7 @@ export function Combine({ activity, onDone }: ActivityProps<'combine'>) {
   const tap = (o: string, v: string) => {
     const key = o + v;
     if (blocked.includes(key)) {
-      sfx('bad');
+      wrong();
       return;
     }
     sfx('tap');

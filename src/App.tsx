@@ -1,19 +1,25 @@
 import { Pic } from './components/Pic';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PHRASES } from './content/phrases';
-import { WORLD1, WORLD1_IDS } from './content/world1';
+import { ALL_LESSONS, WORLDS, worldOpen } from './content/worlds';
 import { Celebration } from './components/Celebration';
 import { LessonPlayer } from './components/LessonPlayer';
 import { Settings } from './components/Settings';
 import { TruckScene } from './components/TruckScene';
+import { Welcome } from './components/Welcome';
 import { loadAudioManifest, setSoundEnabled, setSpeakingListener, sfx, speak, unlockAudio } from './lib/audio';
+import { currentEnv, needsInstallHint } from './lib/install';
+import { setMissListener } from './lib/misses';
 import { duckMusic, setMusicEnabled, startMusic } from './lib/music';
 import {
   doneCount,
   emptyProgress,
   loadProgress,
   markComplete,
+  recordMiss,
   requestPersistence,
+  resumeStep,
+  setResume,
   tileState,
   saveProgress,
   type Progress,
@@ -28,8 +34,12 @@ export function App() {
   const [celebrate, setCelebrate] = useState<{ id: string; first: boolean } | null>(null);
   const [parentOpen, setParentOpen] = useState(false);
   const [hint, setHint] = useState('');
+  const [worldPick, setWorldPick] = useState<number | null>(null);
   const holdTimer = useRef<number | null>(null);
   const unlocked = useRef(false);
+  const latest = useRef<Progress | null>(null);
+  const playingRef = useRef<string | null>(null);
+  playingRef.current = playing;
 
   useEffect(() => {
     let alive = true;
@@ -37,6 +47,7 @@ export function App() {
       if (!alive) return;
       setSoundEnabled(p.soundOn);
       setMusicEnabled(p.soundOn && p.musicOn);
+      latest.current = p;
       setProgress(p);
     });
     void loadAudioManifest();
@@ -48,11 +59,32 @@ export function App() {
   }, []);
 
   const update = useCallback((p: Progress) => {
+    latest.current = p;
     setSoundEnabled(p.soundOn);
     setMusicEnabled(p.soundOn && p.musicOn);
     setProgress(p);
     void saveProgress(p);
   }, []);
+
+  /** Change progress from the newest state, also from callbacks that were created earlier. */
+  const change = useCallback(
+    (fn: (p: Progress) => Progress) => {
+      const cur = latest.current;
+      if (!cur) return;
+      const next = fn(cur);
+      if (next !== cur) update(next);
+    },
+    [update],
+  );
+
+  // wrong answers are counted per lesson for the parent view
+  useEffect(() => {
+    setMissListener(() => {
+      const id = playingRef.current;
+      if (id) change((p) => recordMiss(p, id));
+    });
+    return () => setMissListener(null);
+  }, [change]);
 
   const firstTap = () => {
     if (unlocked.current) return;
@@ -64,14 +96,14 @@ export function App() {
   const finish = (lessonId: string) => {
     if (!progress) return;
     const already = lessonId in progress.completed;
-    const next = already ? progress : markComplete(progress, lessonId);
+    const next = setResume(already ? progress : markComplete(progress, lessonId), lessonId, 0);
     update(next);
     void requestPersistence();
     setPlaying(null);
     setCelebrate({ id: lessonId, first: !already });
     sfx('win');
     if (!already) {
-      const all = doneCount(WORLD1_IDS, next) === WORLD1_IDS.length;
+      const all = world.lessons.every((l) => next.completed[l.id]);
       void speak(all ? PHRASES.worldDone : PHRASES.lessonDone);
     }
   };
@@ -105,20 +137,50 @@ export function App() {
 
   if (!progress) return <div className="boot" role="status">Đang tải…</div>;
 
-  const lesson = playing ? WORLD1.find((l) => l.id === playing) : undefined;
-  const done = doneCount(WORLD1_IDS, progress);
-  const allDone = done === WORLD1_IDS.length;
+  // the world on screen: the one picked, else the first that is not finished
+  const firstOpen = WORLDS.findIndex((w) => !w.lessons.every((l) => progress.completed[l.id]));
+  const worldIdx = Math.min(worldPick ?? (firstOpen < 0 ? WORLDS.length - 1 : firstOpen), WORLDS.length - 1);
+  const world = WORLDS[worldIdx];
+  const WORLD = world.lessons;
+  const ids = WORLD.map((l) => l.id);
+  const nextWorld = worldIdx < WORLDS.length - 1 ? WORLDS[worldIdx + 1] : undefined;
+
+  const lesson = playing ? WORLD.find((l) => l.id === playing) : undefined;
+  const done = doneCount(ids, progress);
+  const allDone = done === ids.length;
+  const nextOpen = !!nextWorld && worldOpen(WORLDS, worldIdx + 1, progress.completed);
+
+  if (!progress.welcomed) {
+    return (
+      <div className="app" onPointerDownCapture={firstTap}>
+        <Welcome
+          onStart={() => {
+            update({ ...progress, welcomed: true });
+            void speak(PHRASES.welcome);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="app" onPointerDownCapture={firstTap}>
       {lesson ? (
-        <LessonPlayer lesson={lesson} index={WORLD1.indexOf(lesson)} onFinish={() => finish(lesson.id)} onExit={() => setPlaying(null)} />
+        <LessonPlayer
+          key={lesson.id}
+          lesson={lesson}
+          index={WORLD.indexOf(lesson)}
+          startStep={resumeStep(progress, lesson.id)}
+          onStep={(step) => change((p) => (p.completed[lesson.id] ? p : setResume(p, lesson.id, step)))}
+          onFinish={() => finish(lesson.id)}
+          onExit={() => setPlaying(null)}
+        />
       ) : (
         <main className="map">
           <header className="map-bar">
             <h1 className="title">Xe Học Chữ</h1>
-            <span className="count" aria-label={`Đã lau ${done} trên ${WORLD1_IDS.length} mảnh bùn`}>
-              <Pic emoji="🧽" className="pic-ui" /> {done}/{WORLD1_IDS.length}
+            <span className="count" aria-label={`Đã lau ${done} trên ${ids.length} mảnh bùn`}>
+              <Pic emoji="🧽" className="pic-ui" /> {done}/{ids.length}
             </span>
             <button
               type="button"
@@ -133,8 +195,34 @@ export function App() {
               <Pic emoji="⚙️" className="pic-ui" />
             </button>
           </header>
+          {WORLDS.length > 1 && (
+            <nav className="worlds" aria-label="Chọn xe">
+              {WORLDS.map((w, i) => {
+                const open = worldOpen(WORLDS, i, progress.completed);
+                const clean = w.lessons.every((l) => progress.completed[l.id]);
+                return (
+                  <button
+                    key={w.id}
+                    type="button"
+                    className={`world-chip${i === worldIdx ? ' on' : ''}${open ? '' : ' locked'}`}
+                    aria-label={`${w.name}${open ? (clean ? ' — đã sạch' : '') : ' — chưa mở'}`}
+                    aria-current={i === worldIdx ? 'true' : undefined}
+                    onClick={() => {
+                      if (!open) return showHint(PHRASES.notYet);
+                      setJustWiped(null);
+                      setWorldPick(i);
+                    }}
+                  >
+                    <Pic emoji={open ? w.icon : '🔒'} className="pic-ui" />
+                  </button>
+                );
+              })}
+            </nav>
+          )}
           <TruckScene
-            lessons={WORLD1}
+            lessons={WORLD}
+            truck={world.truck}
+            name={world.name}
             progress={progress}
             justWiped={justWiped}
             onOpen={openLesson}
@@ -149,25 +237,40 @@ export function App() {
               className="btn btn-go glow play-next"
               aria-label="Học bài tiếp theo"
               onClick={() => {
-                const next = WORLD1.find((_, i) => tileState(WORLD1_IDS, progress, i) === 'current');
+                const next = WORLD.find((_, i) => tileState(ids, progress, i) === 'current');
                 if (next) openLesson(next.id);
               }}
             >
               <span className="play-tri" aria-hidden="true">▶</span>
             </button>
           )}
+          {allDone && nextWorld && nextOpen && (
+            <button
+              type="button"
+              className="btn btn-go glow play-next"
+              aria-label="Sang xe tiếp theo"
+              onClick={() => {
+                setJustWiped(null);
+                setWorldPick(worldIdx + 1);
+                void speak(PHRASES.nextTruck);
+              }}
+            >
+              <Pic emoji={nextWorld.icon} className="pic-ui" /> <span className="play-tri" aria-hidden="true">▶</span>
+            </button>
+          )}
         </main>
       )}
       {celebrate && (() => {
-        const idx = WORLD1.findIndex((l) => l.id === celebrate.id);
+        const idx = WORLD.findIndex((l) => l.id === celebrate.id);
+        if (idx < 0) return null;
         return (
           <Celebration
-            title={WORLD1[idx].title}
-            label={WORLD1[idx].label}
+            title={WORLD[idx].title}
+            label={WORLD[idx].label}
             hasPrev={idx > 0}
-            hasNext={idx < WORLD1.length - 1}
-            onPrev={() => openLesson(WORLD1[idx - 1].id)}
-            onNext={() => openLesson(WORLD1[idx + 1].id)}
+            hasNext={idx < WORLD.length - 1}
+            onPrev={() => openLesson(WORLD[idx - 1].id)}
+            onNext={() => openLesson(WORLD[idx + 1].id)}
             onMap={closeCelebration}
           />
         );
@@ -175,10 +278,13 @@ export function App() {
       {parentOpen && (
         <Settings
           progress={progress}
+          lessons={ALL_LESSONS}
+          installHint={needsInstallHint(currentEnv())}
           onChange={update}
           onReset={() => {
-            update({ ...emptyProgress(), soundOn: progress.soundOn, musicOn: progress.musicOn });
+            update({ ...emptyProgress(), welcomed: true, soundOn: progress.soundOn, musicOn: progress.musicOn });
             setJustWiped(null);
+            setWorldPick(null);
           }}
           onClose={() => setParentOpen(false)}
         />

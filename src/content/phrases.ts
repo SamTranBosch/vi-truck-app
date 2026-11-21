@@ -19,7 +19,9 @@ export const PHRASES = {
   combine: 'Chọn một chữ ở hàng, một chữ ở cột.',
   notYet: 'Chưa đến lượt bài này.',
   lessonDone: 'Bé đã lau xong một mảnh bùn!',
-  worldDone: 'Chiếc xe cứu hỏa đã sạch bóng! Bé giỏi quá!',
+  worldDone: 'Chiếc xe đã sạch bóng! Bé giỏi quá!',
+  welcome: 'Chào bé! Cô và bé cùng lau xe nhé!',
+  nextTruck: 'Mình đi lau chiếc xe tiếp theo nhé!',
   findLetter: (letters: string[]) => `Tìm chữ ${letters.join(', chữ ')}.`,
   whichSound: (name: string) => `Tiếng nào có âm ${name}?`,
   whichTone: (name: string) => `Tiếng nào có thanh ${name}?`,
@@ -43,4 +45,6 @@ export const ALL_FIXED_PHRASES: string[] = [
   PHRASES.notYet,
   PHRASES.lessonDone,
   PHRASES.worldDone,
+  PHRASES.welcome,
+  PHRASES.nextTruck,
 ];

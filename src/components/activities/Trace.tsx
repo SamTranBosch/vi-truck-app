@@ -2,9 +2,10 @@ import { Pic } from '../Pic';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PHRASES } from '../../content/phrases';
 import { traceSay } from '../../content/speech';
-import { sfx, speak } from '../../lib/audio';
+import { speak } from '../../lib/audio';
+import { wrong } from '../../lib/misses';
 import { evaluateTrace } from '../../lib/tracing';
-import { Dots, NextButton, SpeakButton, cheer, useLater } from '../shared';
+import { Dots, NextButton, SpeakButton, cheer, useIdleHint, useLater } from '../shared';
 import type { ActivityProps } from './types';
 
 const FONT = "'Andika', system-ui, sans-serif";
@@ -44,6 +45,9 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
   const [fails, setFails] = useState(0);
   const [ok, setOk] = useState(false);
   const [shake, setShake] = useState(false);
+  const [drew, setDrew] = useState(false);
+  // Nothing drawn for a while: say the prompt again and make the letter pulse.
+  const nudge = useIdleHint(`${i}:${drew}:${ok}`, drew || ok ? [] : ['go']) !== null;
   const item = activity.items[i];
   const later = useLater();
   const hasCanvas = useMemo(canvasSupported, []);
@@ -90,8 +94,13 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
     setup();
     setOk(false);
     setFails(0);
+    setDrew(false);
     void speak(traceSay(item));
   }, [item, hasCanvas, setup]);
+
+  useEffect(() => {
+    if (nudge) void speak(traceSay(item));
+  }, [nudge, item]);
 
   const point = (e: React.PointerEvent) => {
     const r = inkRef.current!.getBoundingClientRect();
@@ -101,6 +110,7 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
   const onDown = (e: React.PointerEvent) => {
     if (ok) return;
     cancelCheck();
+    setDrew(true);
     e.currentTarget.setPointerCapture?.(e.pointerId);
     drawing.current = true;
     last.current = point(e);
@@ -150,7 +160,7 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
       setFails((f) => f + 1);
       // Only scold when the ink is mostly off the letter. An unfinished drawing is just "keep going".
       if (result.spill > MAX_SPILL) {
-        sfx('bad');
+        wrong();
         setShake(true);
         later(() => setShake(false), 400);
       }
@@ -190,6 +200,7 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
     const ink = inkRef.current;
     if (!ink) return;
     cancelCheck();
+    setDrew(false);
     ink.getContext('2d')!.clearRect(0, 0, size.current.w, size.current.h);
   };
 
@@ -208,7 +219,7 @@ export function Trace({ activity, onDone }: ActivityProps<'trace'>) {
   return (
     <div className="act act-trace">
       <p className="hint">{PHRASES.traceIt}</p>
-      <div ref={wrapRef} className={`trace-pad${ok ? ' ok' : ''}${shake ? ' shake' : ''}`}>
+      <div ref={wrapRef} className={`trace-pad${ok ? ' ok' : ''}${shake ? ' shake' : ''}${nudge ? ' nudge' : ''}`}>
         <canvas ref={guideRef} className="trace-layer" aria-hidden="true" />
         <canvas
           ref={inkRef}

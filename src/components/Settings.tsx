@@ -1,16 +1,21 @@
 import { useRef, useState } from 'react';
 import { audioClipCount } from '../lib/audio';
-import { exportProgress, parseProgress, type Progress } from '../lib/progress';
+import type { Lesson } from '../content/types';
+import { exportProgress, parseProgress, shakyLessons, type Progress } from '../lib/progress';
 
 interface Props {
   progress: Progress;
   onChange: (p: Progress) => void;
   onReset: () => void;
   onClose: () => void;
+  /** every lesson of every world, to name the ones the child finds hard */
+  lessons?: Lesson[];
+  /** show the iPhone "Add to Home Screen" tip */
+  installHint?: boolean;
 }
 
 /** Parent area: sound on/off, back up / restore progress, start over. */
-export function Settings({ progress, onChange, onReset, onClose }: Props) {
+export function Settings({ progress, onChange, onReset, onClose, lessons = [], installHint = false }: Props) {
   const [text, setText] = useState('');
   const [msg, setMsg] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
@@ -47,6 +52,7 @@ export function Settings({ progress, onChange, onReset, onClose }: Props) {
   };
 
   const clips = audioClipCount();
+  const shaky = shakyLessons(progress).map((s) => ({ ...s, lesson: lessons.find((l) => l.id === s.id) }));
 
   return (
     <div className="modal" role="dialog" aria-modal="true" aria-label="Dành cho phụ huynh">
@@ -73,6 +79,31 @@ export function Settings({ progress, onChange, onReset, onClose }: Props) {
           {clips > 0 ? `Giọng cô giáo: ${clips} đoạn âm thanh có sẵn trong máy.` : 'Đang dùng giọng đọc của thiết bị (chưa có âm thanh cô giáo).'}
         </p>
         <p className="small">Đã xong {Object.keys(progress.completed).length} bài.</p>
+        <section className="shaky" aria-label="Bài bé hay nhầm">
+          <h3>Bài bé hay nhầm</h3>
+          {shaky.length === 0 ? (
+            <p className="small">Chưa có bài nào bé nhầm nhiều. Bé đang làm tốt!</p>
+          ) : (
+            <>
+              <ul>
+                {shaky.map((s) => (
+                  <li key={s.id}>
+                    <strong>{s.lesson?.title ?? s.id}</strong> — nhầm {s.misses} lần
+                  </li>
+                ))}
+              </ul>
+              <p className="small">Gợi ý: cho bé chơi lại các bài này (chạm vào mảnh bùn đã lau).</p>
+            </>
+          )}
+        </section>
+        {installHint && (
+          <section className="install" aria-label="Thêm vào màn hình chính">
+            <h3>Cài thành ứng dụng trên iPhone / iPad</h3>
+            <p className="small">
+              Trong Safari, chạm nút Chia sẻ (hình vuông có mũi tên lên), chọn “Thêm vào Màn hình chính”. Lần sau bé mở thẳng từ màn hình chính, không có thanh địa chỉ và chạy được cả khi không có mạng.
+            </p>
+          </section>
+        )}
         <div className="modal-actions">
           <button type="button" className="btn btn-sky" onClick={doExport}>Lưu tiến độ</button>
           <button type="button" className="btn btn-sky" onClick={() => fileRef.current?.click()}>Khôi phục từ tệp</button>

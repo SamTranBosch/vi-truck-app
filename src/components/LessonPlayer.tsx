@@ -1,5 +1,5 @@
 import { Glyph } from './Pic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Lesson } from '../content/types';
 import { stopSpeaking } from '../lib/audio';
 import { Combine } from './activities/Combine';
@@ -17,14 +17,24 @@ interface Props {
   lesson: Lesson;
   /** position of the lesson in the world; gives each lesson its own colour */
   index?: number;
+  /** step to start at (resuming a lesson the child left) */
+  startStep?: number;
+  /** called whenever the step changes, so the app can remember where the child is */
+  onStep?: (step: number) => void;
   onFinish: () => void;
   onExit: () => void;
 }
 
 /** Plays a lesson's activities one after another. */
-export function LessonPlayer({ lesson, index = 0, onFinish, onExit }: Props) {
-  const [step, setStep] = useState(0);
+export function LessonPlayer({ lesson, index = 0, startStep = 0, onStep, onFinish, onExit }: Props) {
+  const [step, setStep] = useState(Math.min(Math.max(startStep, 0), lesson.activities.length - 1));
   const activity = lesson.activities[step];
+
+  useEffect(() => {
+    onStep?.(step);
+    // report only when the step changes, not when the parent passes a new callback
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   const done = () => {
     if (step === lesson.activities.length - 1) onFinish();

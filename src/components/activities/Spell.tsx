@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Pic } from '../Pic';
 import { pic } from '../../content/pictures';
-import { sfx, speak, speakSeq } from '../../lib/audio';
+import { speak, speakSeq } from '../../lib/audio';
+import { wrong } from '../../lib/misses';
 import { TONE_MARK, parseSyllable, spellTokens } from '../../lib/vietnamese';
 import { Dots, SpeakButton, ToneBadge, cheer, useLater } from '../shared';
 import type { ActivityProps } from './types';
@@ -22,7 +23,7 @@ export function Spell({ activity, onDone }: ActivityProps<'spell'>) {
       return;
     }
     if (i !== next) {
-      sfx('bad');
+      wrong();
       setShake(i);
       later(() => setShake(null), 400);
       return;

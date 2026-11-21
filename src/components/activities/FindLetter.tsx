@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { PHRASES } from '../../content/phrases';
 import { letterSay } from '../../content/speech';
 import { sfx, speak } from '../../lib/audio';
+import { wrong as miss } from '../../lib/misses';
 import { shuffle } from '../../lib/rng';
-import { SpeakButton, cheer, useLater } from '../shared';
+import { SpeakButton, cheer, useIdleHint, useLater } from '../shared';
 import type { ActivityProps } from './types';
 
 /** Tìm chữ: tap the target letters hidden among other letters. */
@@ -17,6 +18,11 @@ export function FindLetter({ activity, onDone }: ActivityProps<'findLetter'>) {
   const [found, setFound] = useState<Set<number>>(new Set());
   const [wrong, setWrong] = useState<number | null>(null);
   const later = useLater();
+  // after a quiet moment one of the letters still to find wiggles
+  const hint = useIdleHint(
+    `${found.size}:${wrong}`,
+    tiles.map((t, i) => (activity.targets.includes(t) && !found.has(i) ? String(i) : '')).filter(Boolean),
+  );
 
   useEffect(() => {
     void speak(prompt);
@@ -27,7 +33,7 @@ export function FindLetter({ activity, onDone }: ActivityProps<'findLetter'>) {
     void speak(letterSay(letter));
     if (found.has(i)) return;
     if (!activity.targets.includes(letter)) {
-      sfx('bad');
+      miss();
       setWrong(i);
       later(() => setWrong(null), 450);
       return;
@@ -54,7 +60,7 @@ export function FindLetter({ activity, onDone }: ActivityProps<'findLetter'>) {
           <button
             key={i}
             type="button"
-            className={`letter-btn${found.has(i) ? ' found' : ''}${wrong === i ? ' shake' : ''}`}
+            className={`letter-btn${found.has(i) ? ' found' : ''}${wrong === i ? ' shake' : ''}${hint === String(i) ? ' hint' : ''}`}
             aria-label={`chữ ${t}`}
             aria-pressed={found.has(i)}
             onClick={() => tap(i)}
