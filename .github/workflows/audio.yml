@@ -56,6 +56,9 @@ jobs:
 
       - name: Generate all clips
         if: inputs.mode == 'all'
+        # stop after 40 min and still save what was made (the next step runs anyway)
+        timeout-minutes: 40
+        continue-on-error: true
         run: |
           FORCE=""; if [ "${{ inputs.force }}" = "true" ]; then FORCE="--force"; fi
           npm run audio:gen -- --provider "${{ inputs.provider }}" --voice "${{ inputs.voice }}" $FORCE

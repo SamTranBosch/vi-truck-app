@@ -61,7 +61,8 @@ async function fetchWhenReady(url: string, o: Required<Pick<SynthOptions, 'fetch
 }
 
 export async function synthesize(text: string, opt: SynthOptions): Promise<Buffer> {
-  const fetchFn = opt.fetchFn ?? fetch;
+  // every request gets 30 s: a request that never answers must not freeze the whole run
+  const fetchFn: typeof fetch = opt.fetchFn ?? ((input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(30000) }));
   const poll = { fetchFn, sleepFn: opt.sleepFn ?? realSleep, pollMs: opt.pollMs ?? 800, pollTries: opt.pollTries ?? 20 };
   const voice = opt.voice ?? DEFAULT_VOICE[opt.provider];
   const speed = opt.speed ?? DEFAULT_SPEED[opt.provider];
