@@ -13,12 +13,14 @@ export interface Progress {
   misses: Record<string, number>;
   /** where the child left a lesson without finishing it */
   resume: { id: string; step: number } | null;
+  /** teacher voice: a voice set id, 'device' (the phone's own voice) or null = the default set */
+  voice: string | null;
 }
 
 export const STORAGE_KEY = 'xe-hoc-chu:progress';
 
 export function emptyProgress(): Progress {
-  return { version: 1, completed: {}, soundOn: true, musicOn: true, welcomed: false, misses: {}, resume: null };
+  return { version: 1, completed: {}, soundOn: true, musicOn: true, welcomed: false, misses: {}, resume: null, voice: null };
 }
 
 /** Accepts anything and returns a valid Progress, or null when the shape is wrong. */
@@ -46,7 +48,8 @@ export function parseProgress(raw: unknown): Progress | null {
   const resume = r && typeof r.id === 'string' && Number.isInteger(r.step) && (r.step as number) > 0 ? { id: r.id, step: r.step as number } : null;
   // anyone who already finished a lesson has seen the welcome screen
   const welcomed = d.welcomed === true || Object.keys(completed).length > 0;
-  return { version: 1, completed, soundOn: d.soundOn !== false, musicOn: d.musicOn !== false, welcomed, misses, resume };
+  const voice = typeof d.voice === 'string' && /^[a-z0-9-]{1,60}$/.test(d.voice) ? d.voice : null;
+  return { version: 1, completed, soundOn: d.soundOn !== false, musicOn: d.musicOn !== false, welcomed, misses, resume, voice };
 }
 
 export function exportProgress(p: Progress): string {

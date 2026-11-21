@@ -2,9 +2,10 @@
  * Audio layer.
  *
  * Every spoken thing is a Vietnamese text. For each text we look for a pre-made clip
- * (public/audio/<key>.mp3, listed in public/audio/manifest.json). If the clip is missing
- * we fall back to the browser's own Vietnamese voice (speechSynthesis), so the app is
- * usable from day one and gets better as real clips are added.
+ * (public/audio/<voice set>/<key>.mp3, listed in public/audio/<voice set>/manifest.json). The voice sets
+ * are listed in public/audio/voices.json and the parent picks one in the settings. If the clip is
+ * missing (or the parent chose the device voice) we fall back to the browser's own Vietnamese voice
+ * (speechSynthesis), so the app is usable from day one and gets better as real clips are added.
  */
 
 /** Deterministic file name for a text: hex code points joined by "_" ("cá" -> "63_e1"). */
@@ -13,6 +14,14 @@ export function audioKey(text: string): string {
 }
 
 import { getAudioContext } from './ctx';
+
+export interface VoiceSet {
+  id: string;
+  label: string;
+  note?: string;
+}
+/** The choice that means "the phone's own voice". */
+export const DEVICE_VOICE = 'device';
 
 export interface AudioBackend {
   play(text: string): Promise<void>;
@@ -23,6 +32,13 @@ const CLIP_TIMEOUT_MS = 8000;
 
 export class BrowserAudio implements AudioBackend {
   private clips = new Set<string>();
+  private sets: VoiceSet[] = [];
+  private defaultSet: string | null = null;
+  /** what the parent chose: a set id, DEVICE_VOICE, or null = the default set */
+  private choice: string | null = null;
+  /** the set whose clips are loaded now (null = none, use the device voice) */
+  private active: string | null = null;
+  private loaded = false;
   private current: HTMLAudioElement | null = null;
   private voice: SpeechSynthesisVoice | null = null;
   private baseUrl: string;
@@ -39,16 +55,83 @@ export class BrowserAudio implements AudioBackend {
     }
   }
 
+  /** Reads voices.json and the manifest of the chosen set. Safe to call again after the choice changes. */
   async loadManifest(): Promise<number> {
+    this.clips = new Set();
+    this.active = null;
+    this.loaded = true;
     try {
-      const res = await fetch(`${this.baseUrl}audio/manifest.json`, { cache: 'no-cache' });
+      const res = await fetch(`${this.baseUrl}audio/voices.json`, { cache: 'no-cache' });
+      if (res.ok) {
+        const data = (await res.json()) as { default?: string; sets?: VoiceSet[] };
+        this.sets = Array.isArray(data.sets) ? data.sets.filter((s) => s && typeof s.id === 'string') : [];
+        this.defaultSet = data.default ?? this.sets[0]?.id ?? null;
+      }
+    } catch {
+      this.sets = [];
+      this.defaultSet = null;
+    }
+    if (this.choice === DEVICE_VOICE) return 0;
+    const wanted = this.sets.some((s) => s.id === this.choice) ? this.choice : this.defaultSet;
+    if (!wanted) return 0;
+    try {
+      const res = await fetch(`${this.baseUrl}audio/${wanted}/manifest.json`, { cache: 'no-cache' });
       if (!res.ok) return 0;
       const data = (await res.json()) as { clips?: string[] };
       this.clips = new Set(data.clips ?? []);
+      this.active = this.clips.size > 0 ? wanted : null;
     } catch {
       this.clips = new Set();
     }
     return this.clips.size;
+  }
+
+  isLoaded(): boolean {
+    return this.loaded;
+  }
+
+  voiceSets(): VoiceSet[] {
+    return this.sets;
+  }
+
+  /** the id that is really in use: the chosen set, the default set, or DEVICE_VOICE */
+  activeVoice(): string {
+    return this.active ?? DEVICE_VOICE;
+  }
+
+  setChoice(choice: string | null): boolean {
+    const changed = choice !== this.choice;
+    this.choice = choice;
+    return changed;
+  }
+
+  /** Plays a clip of another voice set without changing the choice (the "listen" button). */
+  preview(setId: string, text: string): Promise<void> {
+    this.stop();
+    if (setId === DEVICE_VOICE) return this.playSpeech(text);
+    return this.playUrl(`${this.baseUrl}audio/${setId}/${audioKey(text)}.mp3`, () => this.playSpeech(text));
+  }
+
+  /** Downloads every clip of the active set so the browser cache holds them and the app works offline. */
+  async prefetch(onProgress?: (done: number, total: number) => void): Promise<number> {
+    const set = this.active;
+    if (!set || typeof fetch === 'undefined') return 0;
+    const keys = [...this.clips];
+    let next = 0;
+    let done = 0;
+    const worker = async () => {
+      while (next < keys.length) {
+        const key = keys[next++];
+        try {
+          await fetch(`${this.baseUrl}audio/${set}/${key}.mp3`);
+        } catch {
+          /* offline or interrupted: the clip is fetched when it is played */
+        }
+        onProgress?.(++done, keys.length);
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    return done;
   }
 
   clipCount(): number {
@@ -74,14 +157,29 @@ export class BrowserAudio implements AudioBackend {
   }
 
   private playClip(text: string): Promise<void> {
+    return this.playUrl(`${this.baseUrl}audio/${this.active}/${audioKey(text)}.mp3`, () => this.playSpeech(text));
+  }
+
+  /** Plays one mp3; if it cannot be loaded or played, `fallback` (the device voice) speaks instead. */
+  private playUrl(url: string, fallback: () => Promise<void>): Promise<void> {
     return new Promise((resolve) => {
-      const el = new Audio(`${this.baseUrl}audio/${audioKey(text)}.mp3`);
+      const el = new Audio(url);
       this.current = el;
-      const done = () => resolve();
+      let finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        resolve();
+      };
+      const failed = () => {
+        if (finished) return;
+        finished = true;
+        void fallback().then(resolve);
+      };
       el.addEventListener('ended', done, { once: true });
-      el.addEventListener('error', done, { once: true });
+      el.addEventListener('error', failed, { once: true });
       window.setTimeout(done, CLIP_TIMEOUT_MS);
-      el.play().catch(done);
+      el.play().catch(failed);
     });
   }
 
@@ -123,6 +221,41 @@ export async function loadAudioManifest(): Promise<number> {
 }
 export function audioClipCount(): number {
   return backend instanceof BrowserAudio ? backend.clipCount() : 0;
+}
+
+/** Applies the parent's choice (a set id, DEVICE_VOICE or null = default), loads its clips and caches them for offline use. */
+export async function chooseVoice(choice: string | null): Promise<void> {
+  if (!(backend instanceof BrowserAudio)) return;
+  const b = backend;
+  if (!b.setChoice(choice) && b.isLoaded()) return;
+  await b.loadManifest();
+  void cacheVoiceForOffline(b);
+}
+export function voiceSets(): VoiceSet[] {
+  return backend instanceof BrowserAudio ? backend.voiceSets() : [];
+}
+export function activeVoice(): string {
+  return backend instanceof BrowserAudio ? backend.activeVoice() : DEVICE_VOICE;
+}
+/** The clips the parent hears when comparing voices: two letter sounds, a word and a praise. */
+export const VOICE_PREVIEW_TEXTS = ['cờ', 'a', 'cá', 'Giỏi quá! Bé làm đúng rồi!'];
+export async function previewVoice(setId: string): Promise<void> {
+  if (!(backend instanceof BrowserAudio)) return;
+  for (const text of VOICE_PREVIEW_TEXTS) await backend.preview(setId, text);
+}
+
+/** Once per voice set and browser: only when a service worker is in charge, so the downloads land in its cache. */
+async function cacheVoiceForOffline(b: BrowserAudio): Promise<void> {
+  const set = b.activeVoice();
+  if (set === DEVICE_VOICE || typeof navigator === 'undefined' || !navigator.serviceWorker?.controller) return;
+  const flag = `xe-hoc-chu:cached:${set}:${b.clipCount()}`;
+  try {
+    if (window.localStorage.getItem(flag)) return;
+    const done = await b.prefetch();
+    if (done >= b.clipCount()) window.localStorage.setItem(flag, '1');
+  } catch {
+    /* best effort */
+  }
 }
 
 let speakingListener: ((speaking: boolean) => void) | null = null;

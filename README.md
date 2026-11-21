@@ -23,6 +23,15 @@ npm run preview    # serve dist/ on :4173 (service worker only works on the buil
 Progress is stored on the device. Parent area: **hold the ⚙️ button 2 seconds** → sound on/off, save/restore progress
 as a file (move a child to a new device), reset.
 
+## Voice sets (switchable in the app)
+Clips live in one folder per voice set, `public/audio/<set-id>/`, listed in `public/audio/voices.json`. The sets are defined in
+`scripts/voice-sets.json`: plain Thục Đoan (first version), Thục Đoan with padding (`dem`) or a carrier phrase (`cau`), Mỹ Duyên
+(Southern) and Mai Anh (standard Northern). Single letters are the weak spot of open-source TTS (very short audio gets clipped or
+rushed), so the `dem` and `cau` sets add silence/context around short words and trim afterwards (`scripts/vieneu_synth.py`).
+In the app: hold the gear 1.5 s -> "Giọng cô giáo" -> "Nghe thử" -> pick. The choice is saved with the progress.
+Generate sets: Actions -> Teacher voice -> provider `vieneu`, mode `sets`, voice `all` (or ids, comma separated; `force` redoes them).
+Only the chosen set is downloaded and cached for offline use, so after a deploy reload twice.
+
 ## Teacher voice (Southern female)
 Until clips exist the app uses the phone's built-in Vietnamese voice (northern, robotic). The real teacher voice is
 **baked in**: mp3 files in `public/audio/` that the service worker caches for offline use.

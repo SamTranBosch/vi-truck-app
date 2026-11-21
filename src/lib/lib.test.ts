@@ -51,7 +51,7 @@ describe('progress', () => {
 
   it('old saves without the new fields still load; a finished lesson implies the welcome was seen', () => {
     const p = parseProgress({ version: 1, completed: { a: 5 } });
-    expect(p).toMatchObject({ welcomed: true, misses: {}, resume: null });
+    expect(p).toMatchObject({ welcomed: true, misses: {}, resume: null, voice: null });
     expect(parseProgress({ version: 1, completed: {} })?.welcomed).toBe(false);
   });
 
@@ -89,7 +89,7 @@ describe('progress', () => {
 
   it('drops entries that are not timestamps', () => {
     const p = parseProgress({ version: 1, completed: { a: 5, b: 'x', c: null }, soundOn: false });
-    expect(p).toEqual({ version: 1, completed: { a: 5 }, soundOn: false, musicOn: true, welcomed: true, misses: {}, resume: null });
+    expect(p).toEqual({ version: 1, completed: { a: 5 }, soundOn: false, musicOn: true, welcomed: true, misses: {}, resume: null, voice: null });
   });
 });
 
@@ -156,5 +156,16 @@ describe('tracing', () => {
     const r = evaluateTrace(target, strokes, W, H);
     expect(r.spill).toBeGreaterThan(0.45);
     expect(r.passed).toBe(false);
+  });
+});
+
+describe('progress: teacher voice choice', () => {
+  it('keeps a valid voice id, drops anything odd, defaults to null', () => {
+    const base = { version: 1, completed: {} };
+    expect(parseProgress({ ...base, voice: 'nam-thuc-doan-cau' })?.voice).toBe('nam-thuc-doan-cau');
+    expect(parseProgress({ ...base, voice: 'device' })?.voice).toBe('device');
+    expect(parseProgress({ ...base, voice: '../x' })?.voice).toBeNull();
+    expect(parseProgress({ ...base, voice: 5 })?.voice).toBeNull();
+    expect(parseProgress(base)?.voice).toBeNull();
   });
 });

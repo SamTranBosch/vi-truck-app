@@ -1,0 +1,10 @@
+{
+  "default": "nam-thuc-doan",
+  "sets": [
+    { "id": "nam-thuc-doan", "label": "Nam Bộ · Thục Đoan", "note": "bản đầu tiên", "voice": "Thục Đoan", "method": "plain", "tempo": 0.9 },
+    { "id": "nam-thuc-doan-dem", "label": "Nam Bộ · Thục Đoan · có đệm", "note": "chữ đơn đọc chậm, có khoảng lặng", "voice": "Thục Đoan", "method": "pad", "tempo": 0.9, "shortTempo": 0.8 },
+    { "id": "nam-thuc-doan-cau", "label": "Nam Bộ · Thục Đoan · đọc kèm câu", "note": "đọc trong câu rồi cắt lấy chữ", "voice": "Thục Đoan", "method": "carrier", "tempo": 0.9, "shortTempo": 0.85 },
+    { "id": "nam-my-duyen-dem", "label": "Nam Bộ · Mỹ Duyên · có đệm", "note": "giọng đọc truyện", "voice": "Mỹ Duyên", "method": "pad", "tempo": 0.9, "shortTempo": 0.8 },
+    { "id": "bac-mai-anh-dem", "label": "Giọng chuẩn (Bắc) · Mai Anh · có đệm", "note": "giọng tin tức", "voice": "Mai Anh", "method": "pad", "tempo": 0.9, "shortTempo": 0.8 }
+  ]
+}

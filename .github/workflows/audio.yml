@@ -15,14 +15,14 @@ on:
         options: [vieneu, fpt, zalo]
         default: vieneu
       voice:
-        description: 'Voice (vieneu: south-female = the 4 Southern women for samples, or one name: Thục Đoan, Mỹ Duyên, Kim Thanh, Thùy Dung; fpt: lannhi or linhsan; zalo: 1)'
+        description: 'vieneu + sets: set ids separated by commas, or all (see scripts/voice-sets.json). samples: voice names (vieneu: south-female = 4 Southern women). fpt: lannhi or linhsan. zalo: 1'
         type: string
-        default: south-female
+        default: all
       mode:
-        description: samples = a few clips to listen to; all = generate every clip and publish
+        description: 'sets = (vieneu) make the voice sets listed in scripts/voice-sets.json and publish; samples = a few clips to listen to; all = (fpt/zalo) every clip into one folder, then publish'
         type: choice
-        options: [samples, all]
-        default: samples
+        options: [sets, samples, all]
+        default: sets
       force:
         description: Regenerate clips that already exist (mode all)
         type: boolean
@@ -66,16 +66,20 @@ jobs:
           path: voice-samples
 
       - name: Generate all clips
-        if: inputs.mode == 'all'
-        # stop after 40 min and still save what was made (the next step runs anyway)
-        timeout-minutes: 40
+        if: inputs.mode == 'all' || inputs.mode == 'sets'
+        # stop after 70 min and still save what was made (the next step runs anyway)
+        timeout-minutes: 70
         continue-on-error: true
         run: |
           FORCE=""; if [ "${{ inputs.force }}" = "true" ]; then FORCE="--force"; fi
-          npm run audio:gen -- --provider "${{ inputs.provider }}" --voice "${{ inputs.voice }}" $FORCE
+          if [ "${{ inputs.mode }}" = "sets" ]; then
+            npm run audio:gen -- --provider vieneu --sets "${{ inputs.voice }}" $FORCE
+          else
+            npm run audio:gen -- --provider "${{ inputs.provider }}" --voice "${{ inputs.voice }}" $FORCE
+          fi
       - name: Commit clips and redeploy
         # also after a partial run (rate limit): keep the clips that worked, run again later for the rest
-        if: ${{ !cancelled() && inputs.mode == 'all' }}
+        if: ${{ !cancelled() && (inputs.mode == 'all' || inputs.mode == 'sets') }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

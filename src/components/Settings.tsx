@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { audioClipCount } from '../lib/audio';
+import { useEffect, useRef, useState } from 'react';
+import { DEVICE_VOICE, activeVoice, audioClipCount, previewVoice, voiceSets, type VoiceSet } from '../lib/audio';
 import type { Lesson, World } from '../content/types';
 import { exportProgress, parseProgress, shakyLessons, type Progress } from '../lib/progress';
 
@@ -25,6 +25,13 @@ export function Settings({ progress, onChange, onReset, onClose, lessons = [], i
   const [msg, setMsg] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [sets, setSets] = useState<VoiceSet[]>(() => voiceSets());
+  useEffect(() => {
+    // the list may still be loading when the parent opens this screen
+    const t = window.setTimeout(() => setSets(voiceSets()), 400);
+    return () => window.clearTimeout(t);
+  }, []);
+  const inUse = activeVoice();
 
   const doExport = () => {
     const json = exportProgress(progress);
@@ -80,9 +87,29 @@ export function Settings({ progress, onChange, onReset, onClose, lessons = [], i
           />
           Nhạc nền (nhỏ, tự giảm khi cô nói)
         </label>
-        <p className="small">
-          {clips > 0 ? `Giọng cô giáo: ${clips} đoạn âm thanh có sẵn trong máy.` : 'Đang dùng giọng đọc của thiết bị (chưa có âm thanh cô giáo).'}
-        </p>
+        <section className="voices" aria-label="Giọng cô giáo">
+          <h3>Giọng cô giáo</h3>
+          <p className="small">
+            {clips > 0 ? `Đang dùng ${clips} đoạn âm thanh có sẵn.` : 'Đang dùng giọng đọc của thiết bị (chưa có âm thanh cô giáo).'} Bấm “Nghe thử” để so sánh các giọng, rồi chọn giọng bé nghe rõ nhất.
+          </p>
+          {[...sets, { id: DEVICE_VOICE, label: 'Giọng đọc của thiết bị', note: 'Dự phòng, không cần tải' }].map((v) => {
+            const chosen = (progress.voice ?? '') === v.id || (progress.voice === null && v.id === inUse && v.id !== DEVICE_VOICE);
+            return (
+              <div key={v.id} className={`voice-row${chosen ? ' chosen' : ''}`}>
+                <label className="row-check">
+                  <input type="radio" name="teacher-voice" checked={chosen} onChange={() => onChange({ ...progress, voice: v.id })} />
+                  <span>
+                    {v.label}
+                    {v.note ? <small className="voice-note"> {v.note}</small> : null}
+                  </span>
+                </label>
+                <button type="button" className="btn btn-sky voice-test" onClick={() => void previewVoice(v.id)}>
+                  Nghe thử
+                </button>
+              </div>
+            );
+          })}
+        </section>
         <p className="small">Đã xong {Object.keys(progress.completed).length} bài.</p>
         {worlds.length > 1 && (
           <section className="jump" aria-label="Chế độ phụ huynh: chọn xe">

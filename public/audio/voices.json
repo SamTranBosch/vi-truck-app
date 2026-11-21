@@ -1,0 +1,10 @@
+{
+  "default": "nam-thuc-doan",
+  "sets": [
+    {
+      "id": "nam-thuc-doan",
+      "label": "Nam Bộ · Thục Đoan",
+      "note": "bản đầu tiên"
+    }
+  ]
+}

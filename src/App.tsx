@@ -7,7 +7,7 @@ import { LessonPlayer } from './components/LessonPlayer';
 import { Settings } from './components/Settings';
 import { TruckScene } from './components/TruckScene';
 import { Welcome } from './components/Welcome';
-import { loadAudioManifest, setSoundEnabled, setSpeakingListener, sfx, speak, unlockAudio } from './lib/audio';
+import { chooseVoice, setSoundEnabled, setSpeakingListener, sfx, speak, unlockAudio } from './lib/audio';
 import { currentEnv, needsInstallHint } from './lib/install';
 import { setMissListener } from './lib/misses';
 import { duckMusic, setMusicEnabled, startMusic } from './lib/music';
@@ -52,8 +52,8 @@ export function App() {
       setMusicEnabled(p.soundOn && p.musicOn);
       latest.current = p;
       setProgress(p);
+      void chooseVoice(p.voice); // also loads the list of voices and the clips
     });
-    void loadAudioManifest();
     setSpeakingListener(duckMusic);
     return () => {
       alive = false;
@@ -65,6 +65,7 @@ export function App() {
     latest.current = p;
     setSoundEnabled(p.soundOn);
     setMusicEnabled(p.soundOn && p.musicOn);
+    void chooseVoice(p.voice);
     setProgress(p);
     void saveProgress(p);
   }, []);
@@ -306,7 +307,7 @@ export function App() {
           }}
           onChange={update}
           onReset={() => {
-            update({ ...emptyProgress(), welcomed: true, soundOn: progress.soundOn, musicOn: progress.musicOn });
+            update({ ...emptyProgress(), welcomed: true, soundOn: progress.soundOn, musicOn: progress.musicOn, voice: progress.voice });
             setJustWiped(null);
             setWorldPick(null);
           }}

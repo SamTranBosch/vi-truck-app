@@ -391,3 +391,10 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 4px
 @media (prefers-reduced-motion: reduce) { .gear.holding::after { animation-duration: 1.5s; } }
 .jump-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
 .jump-btn { font-size: 0.95rem; padding: 10px 8px; }
+
+/* parent area: choose the teacher voice */
+.voices { margin: 12px 0; }
+.voice-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
+.voice-row.chosen { font-weight: 700; }
+.voice-note { font-weight: 400; opacity: 0.75; }
+.voice-test { font-size: 0.85rem; padding: 8px 12px; white-space: nowrap; }
