@@ -130,9 +130,9 @@ The book has 93 lessons plus two big reviews = 95 tiles after Mở đầu; with 
 |---|---|---|---|
 | 1 | fire truck | Mở đầu, 1-15 | done |
 | 2 | cement mixer | 16-31 | done (docs/WORLD2_CONTENT.md) |
-| 3 | container truck | 32-47 | not started: v y, Chữ hoa, am ap, ăm ăp, âm âp, em ep, êm êp, im ip, iêm, om op + 2 stories, 2 reviews, 1 review |
+| 3 | container truck | 32-47 | done (docs/WORLD3_CONTENT.md) |
 | 4 | tank truck | 48-62 + Ôn tập giữa học kì I (p. 92) | not started |
 | 5 | dump truck | 63-78 | not started |
 | 6 | crane / tow truck | 79-93 + Ôn tập cuối học kì I (p. 166) | not started |
 Each world needs: page reading (pages x2 per lesson), a data file `worldN.ts`, tests like world2.test.ts, a drawing in TruckArts.tsx
-and (optional) a Canva picture. From World 3 on the parser must also handle final consonants (am, ap, ăm ...): `isDecodable(..., allowCodas)` exists for that.
+and (optional) a Canva picture. Final consonants are handled since World 3: vần targets, `isDecodable` needs the whole vần taught.

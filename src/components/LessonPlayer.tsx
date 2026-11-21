@@ -2,6 +2,7 @@ import { Glyph } from './Pic';
 import { useEffect, useState } from 'react';
 import type { Lesson } from '../content/types';
 import { stopSpeaking } from '../lib/audio';
+import { Capital } from './activities/Capital';
 import { Combine } from './activities/Combine';
 import { FindLetter } from './activities/FindLetter';
 import { Hunt } from './activities/Hunt';
@@ -78,6 +79,9 @@ export function LessonPlayer({ lesson, index = 0, startStep = 0, onStep, onFinis
       break;
     case 'story':
       body = <Story key={key} activity={activity} onDone={done} />;
+      break;
+    case 'capital':
+      body = <Capital key={key} activity={activity} onDone={done} />;
       break;
     case 'combine':
       body = <Combine key={key} activity={activity} onDone={done} />;

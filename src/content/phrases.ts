@@ -23,6 +23,8 @@ export const PHRASES = {
   welcome: 'Chào bé! Cô và bé cùng lau xe nhé!',
   nextTruck: 'Mình đi lau chiếc xe tiếp theo nhé!',
   findLetter: (letters: string[]) => `Tìm chữ ${letters.join(', chữ ')}.`,
+  whichRhyme: (name: string) => `Tiếng nào có vần ${name}?`,
+  findCapital: (name: string) => `Chữ hoa của chữ ${name} là chữ nào?`,
   whichSound: (name: string) => `Tiếng nào có âm ${name}?`,
   whichTone: (name: string) => `Tiếng nào có thanh ${name}?`,
 } as const;

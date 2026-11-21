@@ -102,15 +102,21 @@ export function syllablesOf(word: string): Syllable[] {
   return word.trim().split(/\s+/).filter(Boolean).map(parseSyllable);
 }
 
-export type SoundTarget = { onset: string } | { vowel: string };
+/** A sound to look for: the first consonant, the vowel, or a whole vần such as "am" (vowel + final consonant). */
+export type SoundTarget = { onset: string } | { vowel: string } | { rhyme: string };
 
 export function targetLabel(t: SoundTarget): string {
-  return 'onset' in t ? t.onset : t.vowel;
+  if ('onset' in t) return t.onset;
+  return 'vowel' in t ? t.vowel : t.rhyme;
 }
 
 /** True when any syllable of the word starts with the onset, or has exactly that vowel as nucleus. */
 export function hasSound(word: string, target: SoundTarget): boolean {
-  return syllablesOf(word).some((s) => ('onset' in target ? s.onset === target.onset : s.nucleus === target.vowel));
+  return syllablesOf(word).some((s) => {
+    if ('onset' in target) return s.onset === target.onset;
+    if ('vowel' in target) return s.nucleus === target.vowel;
+    return s.nucleus + s.coda === target.rhyme;
+  });
 }
 
 export function hasTone(word: string, tone: Tone): boolean {
@@ -128,6 +134,9 @@ export const ONSET_SAY: Record<string, string> = {
   ch: 'chờ', gh: 'gờ', gi: 'giờ', kh: 'khờ', ng: 'ngờ', ngh: 'ngờ', nh: 'nhờ', ph: 'phờ', qu: 'quờ', th: 'thờ', tr: 'trờ',
 };
 
+/** How a final consonant is said when spelling a vần: a - mờ - am. */
+export const CODA_SAY: Record<string, string> = { m: 'mờ', p: 'pờ', n: 'nờ', t: 'tờ', c: 'cờ', ch: 'chờ', ng: 'ngờ', nh: 'nhờ' };
+
 export interface SpellToken {
   kind: 'onset' | 'rhyme' | 'syllable' | 'tone' | 'word';
   /** What is shown on the tile. */
@@ -143,6 +152,14 @@ export interface SpellToken {
 export function spellTokens(word: string): SpellToken[] {
   const s = parseSyllable(word);
   const tokens: SpellToken[] = [];
+  // a vần on its own (am, iêp ...): a - mờ - am
+  if (!s.onset && s.coda && s.tone === 'ngang') {
+    return [
+      { kind: 'rhyme', show: s.nucleus, say: s.nucleus },
+      { kind: 'onset', show: s.coda, say: CODA_SAY[s.coda] ?? s.coda },
+      { kind: 'word', show: word, say: word },
+    ];
+  }
   if (s.onset) tokens.push({ kind: 'onset', show: s.onset, say: ONSET_SAY[s.onset] ?? s.onset });
   const rhyme = s.nucleus + s.coda;
   tokens.push({ kind: 'rhyme', show: rhyme, say: rhyme });

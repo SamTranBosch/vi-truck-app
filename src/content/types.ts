@@ -32,6 +32,8 @@ export type Activity =
   | { type: 'story'; story: Story }
   /** Tập đọc: read words or short lines. Tap a word to hear it; the speaker reads the whole line. */
   | { type: 'read'; lines: string[] }
+  /** Chữ hoa: see a small letter, pick its capital among three. */
+  | { type: 'capital'; letters: string[] }
   /** Ôn tập: build syllables from a consonant row and a vowel column. */
   | { type: 'combine'; onsets: string[]; vowels: string[]; blocked: string[]; need: number };
 

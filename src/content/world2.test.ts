@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { audioKey } from '../lib/audio';
-import { hasSound, spellTokens, syllablesOf } from '../lib/vietnamese';
+import { hasSound, spellTokens, syllablesOf, targetLabel } from '../lib/vietnamese';
 import { isDecodable, learnedAfter } from './decode';
 import { PICS } from './pictures';
 import { collectSpeech, readWords } from './speech';
@@ -50,7 +50,7 @@ describe('hunts: answers computed from the words', () => {
 
   it('each letter lesson hunts for both of its letters', () => {
     WORLD2.filter((l) => l.kind === 'letters').forEach((l) => {
-      const targets = l.activities.filter((a) => a.type === 'hunt').map((a) => (a.type === 'hunt' && a.kind === 'sound' ? ('onset' in a.target ? a.target.onset : a.target.vowel) : ''));
+      const targets = l.activities.filter((a) => a.type === 'hunt').map((a) => (a.type === 'hunt' && a.kind === 'sound' ? targetLabel(a.target) : ''));
       expect(targets, l.id).toHaveLength(2);
       expect(new Set(targets).size).toBe(2);
     });

@@ -8,7 +8,9 @@ export const NUMBER_SAY: Record<string, string> = {
 
 /** What the voice says when a single letter (or number) is tapped. */
 export function letterSay(letter: string): string {
-  return NUMBER_SAY[letter] ?? ONSET_SAY[letter] ?? letter;
+  // a capital letter is read like its small letter
+  const small = letter.toLowerCase();
+  return NUMBER_SAY[letter] ?? ONSET_SAY[small] ?? small;
 }
 
 /** What the voice says for an item in a tracing exercise: letters by name, words as words. */
@@ -18,6 +20,7 @@ export function traceSay(item: string): string {
 
 export function soundPrompt(target: SoundTarget): string {
   const label = targetLabel(target);
+  if ('rhyme' in target) return PHRASES.whichRhyme(label);
   return PHRASES.whichSound('onset' in target ? (ONSET_SAY[label] ?? label) : label);
 }
 
@@ -58,6 +61,8 @@ function activitySpeech(a: Activity): string[] {
       return a.story.scenes.map((s) => s.text);
     case 'read':
       return [PHRASES.readAloud, ...a.lines.flatMap((l) => [readSay(l), ...readWords(l)])];
+    case 'capital':
+      return [...a.letters.map((l) => PHRASES.findCapital(letterSay(l))), ...a.letters.map(letterSay), ...a.letters.map((l) => letterSay(l.toUpperCase()))];
     case 'combine': {
       const out: string[] = [...a.onsets.map(letterSay), ...a.vowels.map(letterSay)];
       for (const o of a.onsets)

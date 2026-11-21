@@ -14,12 +14,13 @@ export function learnedAfter(lessons: Lesson[], index: number): { letters: Set<s
 
 /**
  * A word is readable when all its letters and its tones have been taught.
- * Final consonants (am, an, ang ...) are taught from lesson 36 on, so until then a readable word has none.
+ * A syllable with a final consonant (am, iêp ...) needs its whole vần taught (a vần is a unit in the book);
+ * an open syllable needs its vowel (or ia, ua, ưa) taught.
  */
-export function isDecodable(word: string, letters: Set<string>, tones: Set<Tone>, allowCodas = false): boolean {
+export function isDecodable(word: string, letters: Set<string>, tones: Set<Tone>): boolean {
   return syllablesOf(word).every((s) => {
     if (!tones.has(s.tone)) return false;
-    if (s.coda !== '' && !allowCodas) return false;
-    return [s.onset, s.nucleus].filter(Boolean).every((p) => letters.has(p));
+    if (s.onset && !letters.has(s.onset)) return false;
+    return letters.has(s.coda ? s.nucleus + s.coda : s.nucleus) || (!s.nucleus && !s.coda);
   });
 }

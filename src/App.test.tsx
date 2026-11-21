@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
+import { Capital } from './components/activities/Capital';
 import { Combine } from './components/activities/Combine';
 import { FindLetter } from './components/activities/FindLetter';
 import { Hunt } from './components/activities/Hunt';
@@ -12,6 +13,7 @@ import { Story } from './components/activities/Story';
 import { Trace } from './components/activities/Trace';
 import type { Activity } from './content/types';
 import { WORLD1 } from './content/world1';
+import { WORLD3 } from './content/world3';
 import { setAudioBackend, type AudioBackend } from './lib/audio';
 import { STORAGE_KEY } from './lib/progress';
 
@@ -26,6 +28,7 @@ function ActivityView({ activity, onDone }: { activity: Activity; onDone: () => 
     case 'read': return <Read activity={activity} onDone={onDone} />;
     case 'story': return <Story activity={activity} onDone={onDone} />;
     case 'combine': return <Combine activity={activity} onDone={onDone} />;
+    case 'capital': return <Capital activity={activity} onDone={onDone} />;
   }
 }
 
@@ -133,6 +136,33 @@ describe('nudges and miss counting', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'chữ e' })[0]);
     expect(n).toBe(1);
     setMissListener(null);
+  });
+});
+
+describe('Capital letters', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    spoken.length = 0;
+    setAudioBackend(fake);
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('asks for the capital of each small letter and finishes after the last one', async () => {
+    const done = vi.fn();
+    render(<Capital activity={{ type: 'capital', letters: ['a', 'đ', 'h'] }} onDone={done} />);
+    await tick(100);
+    expect(screen.getAllByRole('button', { name: /^chữ hoa / })).toHaveLength(3);
+    fireEvent.click(screen.getByRole('button', { name: 'chữ hoa A' }));
+    await tick(1000);
+    // second round: a wrong capital does not move on
+    fireEvent.click(screen.getByRole('button', { name: 'chữ hoa H' }));
+    await tick(1000);
+    expect(screen.getByText('đ', { selector: '.target-badge' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'chữ hoa Đ' }));
+    await tick(1000);
+    fireEvent.click(screen.getByRole('button', { name: 'chữ hoa H' }));
+    await tick(3000);
+    expect(done).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -261,7 +291,7 @@ describe('App flow', () => {
 
 describe('every activity renders on its own', () => {
   beforeEach(() => { setAudioBackend(fake); });
-  const cases = WORLD1.flatMap((l) => l.activities.map((a, i) => [`${l.id}#${i} ${a.type}`, a] as const));
+  const cases = [...WORLD1, ...WORLD3].flatMap((l) => l.activities.map((a, i) => [`${l.id}#${i} ${a.type}`, a] as const));
   it.each(cases)('%s', (_name, a) => {
     const done = vi.fn();
     const { container, unmount } = render(<ActivityView activity={a} onDone={done} />);

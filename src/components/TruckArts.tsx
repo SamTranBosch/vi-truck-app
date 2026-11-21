@@ -117,8 +117,68 @@ export function CementArt() {
   );
 }
 
+/** Container truck (xe container) at a harbour with a gantry crane and stacked boxes. */
+export function ContainerArt() {
+  const ribs: ReactElement[] = [];
+  for (let k = 0; k < 9; k++) ribs.push(<path key={k} d={`M${44 + k * 20} 244 V318`} stroke={INK} strokeWidth={2.5} opacity={0.35} />);
+  return (
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <rect x={0} y={0} width={360} height={340} fill="url(#sky)" />
+      <circle cx={62} cy={48} r={24} fill={SUN} stroke={INK} strokeWidth={3} />
+      <Cloud x={150} y={40} />
+      <Cloud x={262} y={86} s={0.8} />
+
+      {/* sea and ship */}
+      <rect x={0} y={246} width={360} height={94} fill="#6FB6D8" stroke={INK} strokeWidth={3} />
+      <path d="M0 262 q15 -8 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0" fill="none" stroke="#fff" strokeWidth={3} opacity={0.8} />
+      <path d="M180 246 L196 276 H340 L350 246 Z" fill="#5B6478" stroke={INK} strokeWidth={3} />
+      <rect x={202} y={218} width={44} height={28} fill="#E8523F" stroke={INK} strokeWidth={2.5} />
+      <rect x={246} y={218} width={44} height={28} fill="#3E7CC4" stroke={INK} strokeWidth={2.5} />
+      <rect x={224} y={190} width={44} height={28} fill="#F2B632" stroke={INK} strokeWidth={2.5} />
+
+      {/* gantry crane */}
+      <g stroke={INK} strokeWidth={4} fill="none">
+        <path d="M60 340 V120 M150 340 V120" />
+        <path d="M40 120 H250" strokeWidth={6} />
+        <path d="M60 120 L105 80 L150 120" strokeWidth={3} />
+        <path d="M60 220 H150" strokeWidth={3} />
+        <path d="M200 120 V160" strokeWidth={2.5} />
+      </g>
+      <rect x={184} y={158} width={32} height={20} rx={3} fill="#F2B632" stroke={INK} strokeWidth={2.5} />
+
+      <Road lane="#fff" />
+
+      {/* chassis and trailer */}
+      <rect x={14} y={318} width={238} height={20} rx={5} fill="#5B6478" stroke={INK} strokeWidth={3} />
+      <rect x={30} y={238} width={206} height={82} rx={6} fill="#3E7CC4" stroke={INK} strokeWidth={3} />
+      {ribs}
+      <rect x={30} y={238} width={206} height={82} rx={6} fill="none" stroke={INK} strokeWidth={3} />
+      <rect x={196} y={250} width={30} height={60} rx={3} fill="#2F63A0" stroke={INK} strokeWidth={2.5} />
+      <path d="M211 250 V310" stroke={INK} strokeWidth={2} />
+
+      {/* cab */}
+      <rect x={256} y={270} width={72} height={70} rx={12} fill="#E8523F" stroke={INK} strokeWidth={3} />
+      <path d="M288 278 H316 Q322 278 323 285 L325 308 H288 Z" fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <rect x={264} y={280} width={20} height={28} rx={4} fill="#BFE4F2" stroke={INK} strokeWidth={2.5} />
+      <rect x={316} y={332} width={14} height={12} rx={3} fill="#A8B0C0" stroke={INK} strokeWidth={2.5} />
+      <circle cx={323} cy={320} r={6} fill="#FFE59A" stroke={INK} strokeWidth={2.5} />
+      <Wheel cx={60} />
+      <Wheel cx={112} />
+      <Wheel cx={196} />
+      <Wheel cx={292} />
+
+      {/* stacked containers in the foreground */}
+      <rect x={14} y={400} width={60} height={34} fill="#F2B632" stroke={INK} strokeWidth={2.5} />
+      <rect x={74} y={400} width={60} height={34} fill="#3FA66B" stroke={INK} strokeWidth={2.5} />
+      <rect x={44} y={366} width={60} height={34} fill="#E8523F" stroke={INK} strokeWidth={2.5} />
+      <SvgPic emoji="📦" x={250} y={398} size={44} />
+    </g>
+  );
+}
+
 const ART: Partial<Record<TruckKind, () => ReactElement>> = {
   cement: CementArt,
+  container: ContainerArt,
 };
 
 export function TruckArtFor({ kind }: { kind: TruckKind }) {

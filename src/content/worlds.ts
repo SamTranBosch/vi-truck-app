@@ -1,6 +1,7 @@
 import type { Lesson, World } from './types';
 import { WORLD1 } from './world1';
 import { WORLD2 } from './world2';
+import { WORLD3 } from './world3';
 
 /**
  * All worlds in play order. A world opens when the one before it is finished.
@@ -9,6 +10,7 @@ import { WORLD2 } from './world2';
 export const WORLDS: World[] = [
   { id: 'w1', name: 'Xe cứu hỏa', truck: 'fire', icon: '🚒', lessons: WORLD1 },
   { id: 'w2', name: 'Xe trộn bê tông', truck: 'cement', icon: '🏗️', lessons: WORLD2 },
+  { id: 'w3', name: 'Xe container', truck: 'container', icon: '🚛', lessons: WORLD3 },
 ];
 
 export const ALL_LESSONS: Lesson[] = WORLDS.flatMap((w) => w.lessons);

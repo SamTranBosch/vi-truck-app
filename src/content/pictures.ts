@@ -42,6 +42,24 @@ export const PICS: Record<string, string> = {
   'tre': '🎍', 'trà': '🍵', 'trứng': '🥚', 'trăng': '🌙',
   'tủ': '🗄️', 'sư tử': '🦁', 'cá thu': '🐟', 'chữ': '🔤',
   'cua': '🦀', 'cà chua': '🍅', 'múa': '💃', 'dưa': '🍉', 'mưa': '🌧️',
+  // world 3 (container truck)
+  've': '🦗', 'vở': '📓', 'y tá': '👩‍⚕️', 'ý': '💡',
+  'y tế': '🏥', 'xe đạp': '🚲', 'khám': '🩺', 'quả trám': '🍇',
+  'vạm vỡ': '💪', 'tháp rùa': '🏯', 'múa sạp': '🕺', 'sáp nẻ': '🧴',
+  'chăm chỉ': '🧹', 'cặp da': '💼', 'tằm': '🐛', 'tắm': '🛁',
+  'nằm': '🛏️', 'thắp': '🕯️', 'bắp ngô': '🌽', 'gắp': '🥢',
+  'nấm': '🍄', 'mầm': '🌱', 'sâm cầm': '🦆', 'tập múa': '🩰',
+  'cá mập': '🦈', 'cấp cứu': '🚑', 'củ sâm': '🌿', 'kem': '🍦',
+  'dép': '🩴', 'tem thư': '📮', 'xem ti vi': '📺', 'rèm': '🪟',
+  'lễ phép': '🙇', 'cá chép': '🎏', 'ngõ hẹp': '🛣️', 'đêm': '🌃',
+  'bếp lửa': '🔥', 'nệm': '🛌', 'nếm': '👅', 'mềm': '🧸',
+  'nếp': '🍚', 'xếp': '🧱', 'bìm bịp': '🐦', 'chim': '🐦',
+  'nhím': '🦔', 'cà tím': '🍆', 'kìm': '🔧', 'kịp': '🏃',
+  'nhíp': '🤏', 'diêm': '🔥', 'yếm': '👚', 'tấm thiệp': '💌',
+  'dừa xiêm': '🥥', 'múa kiếm': '🤺', 'liềm': '🌾', 'tấm liếp': '🎋',
+  'diếp cá': '☘️', 'kim tiêm': '💉', 'đom đóm': '🪲', 'họp tổ': '👥',
+  'khóm tre': '🎍', 'chỏm mũ': '🧢', 'xóm quê': '🏡', 'cọp': '🐯',
+  'gom góp': '📦',
 };
 
 export function pic(word: string): string | undefined {
